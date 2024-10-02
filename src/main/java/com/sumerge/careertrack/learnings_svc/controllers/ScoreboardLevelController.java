@@ -23,9 +23,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/score")
+@RequestMapping("/score/level")
 @RequiredArgsConstructor
-public class ScoreboardController {
+public class ScoreboardLevelController {
 
     private ScoreboardService scoreboardService;
 
