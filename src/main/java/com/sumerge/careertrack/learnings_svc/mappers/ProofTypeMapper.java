@@ -1,6 +1,8 @@
 package com.sumerge.careertrack.learnings_svc.mappers;
 
 import com.sumerge.careertrack.learnings_svc.entities.ProofType;
+import com.sumerge.careertrack.learnings_svc.entities.requests.ProofTypeRequestDTO;
+import com.sumerge.careertrack.learnings_svc.entities.responses.ProofTypeResponseDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -13,5 +15,5 @@ public interface ProofTypeMapper {
 
     @Mapping(source = "id" , target = "id")
     @Mapping(source = "name" , target = "name")
-    ProofTypeResponseDTO  toResponseDTO(ProofType proofType);
+    ProofTypeResponseDTO toResponseDTO(ProofType proofType);
 }

@@ -1,4 +1,4 @@
-package com.sumerge.careertrack.learnings_svc.mappers;
+package com.sumerge.careertrack.learnings_svc.entities.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProofTypeRequestDTO {
+public class ScoreboardLevelRequestDTO {
+
     private String name;
+
+    private int minScore;
+
 }

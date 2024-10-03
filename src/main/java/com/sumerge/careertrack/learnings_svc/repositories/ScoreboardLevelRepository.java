@@ -1,0 +1,20 @@
+package com.sumerge.careertrack.learnings_svc.repositories;
+
+import java.util.Optional;
+import java.util.UUID;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.sumerge.careertrack.learnings_svc.entities.ScoreboardLevel;
+
+@Repository
+public interface ScoreboardLevelRepository extends JpaRepository<ScoreboardLevel, UUID> {
+
+    boolean existsByName(String name);
+
+    boolean existsByMinScore(int minScore);
+
+    Optional<ScoreboardLevel> findByName(String name);
+
+}

@@ -1,5 +1,7 @@
-package com.sumerge.careertrack.learnings_svc.mappers;
+package com.sumerge.careertrack.learnings_svc.entities.responses;
 
+import com.sumerge.careertrack.learnings_svc.entities.Booster;
+import com.sumerge.careertrack.learnings_svc.entities.Learning;
 import com.sumerge.careertrack.learnings_svc.entities.ProofType;
 import com.sumerge.careertrack.learnings_svc.entities.enums.ApprovalStatus;
 import lombok.AllArgsConstructor;
@@ -29,8 +31,8 @@ public class UserLearningResponseDTO {
     //TODO dependencies of foreign keys
 
     //    private User user
-    //    private Learning learning
-    //    private Booster booster
+    private Learning learning;
+    private Booster booster;
 
-    private UUID proofId;
+    private ProofType proofType;
 }

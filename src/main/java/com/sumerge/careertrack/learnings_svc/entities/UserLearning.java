@@ -38,13 +38,13 @@ public class UserLearning {
 //    @ManyToOne
 //    private User user;
 //
-//    @JoinColumn
-//    @ManyToOne
-//    private Learning learning
-//
-//    @JoinColumn
-//    @ManyToOne
-//    private Booster booster
+    @JoinColumn
+    @ManyToOne
+    private Learning learning;
+
+    @JoinColumn
+    @ManyToOne
+    private Booster booster;
 
     @JoinColumn
     @ManyToOne

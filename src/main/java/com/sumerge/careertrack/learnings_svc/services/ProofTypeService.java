@@ -1,13 +1,12 @@
 package com.sumerge.careertrack.learnings_svc.services;
 
 import com.sumerge.careertrack.learnings_svc.entities.ProofType;
-import com.sumerge.careertrack.learnings_svc.exceptions.AlreadyExistsException;
 import com.sumerge.careertrack.learnings_svc.exceptions.DoesNotExistException;
 import com.sumerge.careertrack.learnings_svc.mappers.ProofTypeMapper;
-import com.sumerge.careertrack.learnings_svc.mappers.ProofTypeRequestDTO;
-import com.sumerge.careertrack.learnings_svc.mappers.ProofTypeResponseDTO;
+import com.sumerge.careertrack.learnings_svc.entities.requests.ProofTypeRequestDTO;
+import com.sumerge.careertrack.learnings_svc.entities.responses.ProofTypeResponseDTO;
 import com.sumerge.careertrack.learnings_svc.repositories.ProofTypesRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,13 +14,11 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ProofTypeService {
 
-    @Autowired
-    ProofTypesRepository proofTypesRepository;
-
-    @Autowired
-    ProofTypeMapper proofTypeMapper;
+    private final ProofTypesRepository proofTypesRepository;
+    private final ProofTypeMapper proofTypeMapper;
 
     public List<ProofTypeResponseDTO> getAllProofTypes() {
         List<ProofType> userLearnings = proofTypesRepository.findAll();

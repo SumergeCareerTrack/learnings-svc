@@ -1,9 +1,9 @@
 package com.sumerge.careertrack.learnings_svc.controllers;
 
-import com.sumerge.careertrack.learnings_svc.mappers.ProofTypeRequestDTO;
-import com.sumerge.careertrack.learnings_svc.mappers.ProofTypeResponseDTO;
+import com.sumerge.careertrack.learnings_svc.entities.requests.ProofTypeRequestDTO;
+import com.sumerge.careertrack.learnings_svc.entities.responses.ProofTypeResponseDTO;
 import com.sumerge.careertrack.learnings_svc.services.ProofTypeService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,10 +12,10 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/proofs")
+@RequiredArgsConstructor
 public class ProofTypeController {
 
-    @Autowired
-    private ProofTypeService proofTypeService;
+    private final ProofTypeService proofTypeService;
 
     @GetMapping
     public ResponseEntity<List<ProofTypeResponseDTO>> getAllProofTypes() {
