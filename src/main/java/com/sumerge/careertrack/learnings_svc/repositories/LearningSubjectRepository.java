@@ -11,4 +11,8 @@ import java.util.UUID;
 public interface LearningSubjectRepository extends JpaRepository<LearningSubject, UUID> {
 
     boolean existsByTypeAndName(SubjectType type,String name);
+
+    LearningSubject findByName(String subject);
+
+    boolean existsByName(String subject);
 }
