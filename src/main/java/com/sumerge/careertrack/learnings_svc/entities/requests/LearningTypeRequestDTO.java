@@ -11,6 +11,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LearningTypeRequestDTO {
+    private UUID id;
 
     private String name;
 
