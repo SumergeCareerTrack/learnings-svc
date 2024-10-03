@@ -1,6 +1,6 @@
 package com.sumerge.careertrack.learnings_svc.entities.requests;
 
-import com.sumerge.careertrack.learnings_svc.entities.BoosterType;
+import java.util.UUID;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,7 +17,7 @@ public class BoosterRequestDTO {
     private String name;
 
     @lombok.NonNull
-    private BoosterType type;
+    private UUID type;
 
     private boolean isActive;
 }

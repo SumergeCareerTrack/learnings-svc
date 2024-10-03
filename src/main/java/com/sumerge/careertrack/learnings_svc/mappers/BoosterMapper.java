@@ -11,10 +11,12 @@ import com.sumerge.careertrack.learnings_svc.entities.responses.BoosterResponseD
 public interface BoosterMapper {
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "type", ignore = true)
     @Mapping(target = "isActive", source = "active")
     Booster toBooster(BoosterRequestDTO dto);
 
     @Mapping(target = "isActive", source = "active")
+
     BoosterResponseDTO toDto(Booster booster);
 
 }
