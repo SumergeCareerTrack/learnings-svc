@@ -9,6 +9,10 @@ public class AlreadyExistsException extends LearningsException {
     public static final String LEARNING_HAS_SUBJECT = "\"%s\" Learnings with subject \"%s\" already exists.";
     public static final String LEARNING_HAS_TYPE = "\"%s\" Learnings  with type \"%s\" already exists.";
 
+    public static final String BOOSTER = "Booster Type \"%s\" already exists.";
+    public static final String BOOSTER_TYPE = "Booster Type \"%s\" already exists.";
+
+
     public AlreadyExistsException() {
         super();
     }
@@ -21,3 +25,4 @@ public class AlreadyExistsException extends LearningsException {
         super(String.format(message, args));
     }
 }
+
