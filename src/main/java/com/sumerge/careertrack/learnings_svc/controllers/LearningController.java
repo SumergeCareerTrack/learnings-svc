@@ -48,14 +48,14 @@ public class LearningController {
         return ResponseEntity.ok(learning);
     }
     @Tag(name = "Get Learnings")
-    @GetMapping("/type/")
+    @GetMapping("/type")
     public ResponseEntity<List<LearningResponseDTO>> getAllLearningsByType(
             @RequestParam String type) {
         List<LearningResponseDTO> learnings = learningService.getLearningByType(type);
         return ResponseEntity.ok(learnings);
     }
     @Tag(name = "Get Learnings")
-    @GetMapping("/subject/")
+    @GetMapping("/subject")
     public ResponseEntity<List<LearningResponseDTO>> getAllLearningsBySubject(
             @RequestParam String subject) throws Exception {
         List<LearningResponseDTO> learnings = learningService.getAllLearningBySubject(subject);
@@ -65,7 +65,7 @@ public class LearningController {
     /////////////* UPDATE METHODS */////////////
 
     @Tag(name = "Update")
-    @PutMapping("/learning/")
+    @PutMapping("/")
     public ResponseEntity<?> updateLearning(
             @RequestBody LearningRequestDTO learning) throws Exception {
         LearningResponseDTO updatedLearning = learningService.updateLearning(learning.getId(),learning);

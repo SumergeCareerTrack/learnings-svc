@@ -48,7 +48,7 @@ public class LearningSubjectController {
     /////////////* UPDATE METHODS */////////////
 
     @Tag(name = "Update")
-    @PutMapping("/learning/")
+    @PutMapping("/")
     public ResponseEntity<LearningSubjectResponseDTO> updateSubject(
             @RequestBody LearningSubjectRequestDTO learning) throws Exception {
         LearningSubjectResponseDTO updatedLearning = learningSubjectService.updateSubject(learning.getId(),learning);
