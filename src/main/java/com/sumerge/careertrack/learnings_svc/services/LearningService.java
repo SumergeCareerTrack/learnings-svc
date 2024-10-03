@@ -20,8 +20,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class LearningService {
     private final LearningMapper learningMapper;
     private final LearningRepository learningRep;
@@ -39,19 +39,17 @@ public class LearningService {
         );
         newLearning.setType(type);
         newLearning.setSubject(Subject);
-        boolean exists = learningRep.existsByUrlAndDescription(learning.getUrl(), learning.getDescription());
+        boolean exists = learningRep.existsByUrlAndDescriptionAndTypeAndSubject(learning.getUrl(), learning.getDescription(), type, Subject);
 
         if(exists)
         {
-            List<Learning> list = learningRep.findByUrlAndDescription(learning.getUrl(), learning.getDescription());
-            if(list.size()!=1){
-                throw new Exception("Multiple Learning with same URL and Description");
-            }
-            Learning found = list.get(0);
-            if(found.getType().equals(type) && found.getSubject().equals(Subject)){
-                throw new AlreadyExistsException(AlreadyExistsException.LEARNING_SUBJECT, Subject.getName());
+            List<Learning> list = learningRep.findByUrlAndDescriptionAndTypeAndSubject(learning.getUrl(), learning.getDescription(), type, Subject);
+            if(!list.isEmpty()){
+                throw new AlreadyExistsException(AlreadyExistsException.MULTIPLE_LEARNINGS);
             }
         }
+        newLearning.setUrl(learning.getUrl());
+        newLearning.setDescription(learning.getDescription());
         Learning savedLearning = learningRep.save(newLearning);
         return learningMapper.toLearningDTO(savedLearning);
     }
@@ -73,13 +71,17 @@ public class LearningService {
     }
     //TODO: Not Sure how the Enum will turn out needs further testing !!
     public List<LearningResponseDTO> getLearningByType(String typeName) {
+        boolean TypeExists = learningTypeRepository.existsByName(typeName);
+        if(!TypeExists){
+            throw new DoesNotExistException(DoesNotExistException.LEARNING_TYPE, typeName);
+        }
         LearningType learnType = learningTypeRepository.findByName(typeName);
         List<Learning> learnings = learningRep.findByType(learnType);
         return learnings.stream().map(learningMapper::toLearningDTO).toList();
     }
 
 
-    public List<LearningResponseDTO> getAllLearningBySubject(String subject) throws Exception {
+    public List<LearningResponseDTO> getAllLearningsBySubject(String subject) throws Exception {
         boolean SubjectExists = learningSubjectRepository.existsByName(subject);
         if(!SubjectExists){
             throw new DoesNotExistException(DoesNotExistException.LEARNING_SUBJECT, subject);
@@ -114,6 +116,9 @@ public class LearningService {
     }
 
     public void deleteLearning(UUID id) {
+        if(!learningRepository.existsById(id)){
+            throw new DoesNotExistException(DoesNotExistException.LEARNING, id);
+        }
         learningRepository.deleteById(id);
     }
 }

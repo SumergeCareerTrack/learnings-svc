@@ -61,6 +61,8 @@ public class LearningSubjectService {
         return learningSubjectMapper.toLearningSubjectDTO(subject);
     }
 
+
+    //TODO Review If the default value Should be functional or not
     public LearningSubjectResponseDTO updateSubject(UUID id, LearningSubjectRequestDTO learning) throws Exception {
         if(!learningSubjectRepository.existsById(id)){
             throw new DoesNotExistException(DoesNotExistException.LEARNING_SUBJECT, id);

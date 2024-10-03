@@ -19,4 +19,8 @@ public interface LearningRepository extends JpaRepository<Learning, UUID> {
     List<Learning> findByUrlAndDescription(String url, String description);
 
     List<Learning> findBySubject(LearningSubject learnSubject);
+
+    boolean existsByUrlAndDescriptionAndTypeAndSubject(String url, String description, LearningType type, LearningSubject subject);
+
+    List<Learning> findByUrlAndDescriptionAndTypeAndSubject(String url, String description, LearningType type, LearningSubject subject);
 }

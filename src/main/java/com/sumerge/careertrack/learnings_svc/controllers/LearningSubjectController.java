@@ -6,6 +6,7 @@ import com.sumerge.careertrack.learnings_svc.entities.responses.LearningSubjectR
 import com.sumerge.careertrack.learnings_svc.services.LearningSubjectService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.websocket.server.PathParam;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,10 +17,10 @@ import java.util.UUID;
 @CrossOrigin
 @RestController
 @RequestMapping("/learnings/subjects")
+@RequiredArgsConstructor
 public class LearningSubjectController {
 
-    @Autowired
-    private LearningSubjectService learningSubjectService;
+    private final LearningSubjectService learningSubjectService;
 
     /////////////* POSt METHODS */////////////
     @Tag(name = "Post")

@@ -58,7 +58,7 @@ public class LearningController {
     @GetMapping("/subject")
     public ResponseEntity<List<LearningResponseDTO>> getAllLearningsBySubject(
             @RequestParam String subject) throws Exception {
-        List<LearningResponseDTO> learnings = learningService.getAllLearningBySubject(subject);
+        List<LearningResponseDTO> learnings = learningService.getAllLearningsBySubject(subject);
         return ResponseEntity.ok(learnings);
     }
 

@@ -29,7 +29,7 @@ public interface LearningMapper {
     @Mapping(target = "subjectType", expression = "java(map(learning.getSubject()))")
     @Mapping(target = "lengthInHours", source = "lengthInHours")
     LearningResponseDTO toLearningDTO(Learning learning);
-
+//TODO REVIEW if the base value should be Functional or Organisational
     default String map(LearningSubject subject){
         return subject.getType().equals(SubjectType.FUNCTIONAL) ? "Functional" : "Organizational";
     }
