@@ -6,6 +6,8 @@ import com.sumerge.careertrack.learnings_svc.entities.LearningType;
 import com.sumerge.careertrack.learnings_svc.entities.enums.SubjectType;
 import com.sumerge.careertrack.learnings_svc.entities.requests.LearningRequestDTO;
 import com.sumerge.careertrack.learnings_svc.entities.responses.LearningResponseDTO;
+import com.sumerge.careertrack.learnings_svc.exceptions.AlreadyExistsException;
+import com.sumerge.careertrack.learnings_svc.exceptions.DoesNotExistException;
 import com.sumerge.careertrack.learnings_svc.mappers.LearningMapper;
 import com.sumerge.careertrack.learnings_svc.mappers.LearningSubjectMapper;
 import com.sumerge.careertrack.learnings_svc.mappers.LearningTypeMapper;
@@ -30,12 +32,10 @@ public class LearningService {
     public LearningResponseDTO create(LearningRequestDTO learning) throws Exception {
         Learning newLearning = learningMapper.toLearning(learning);
         LearningType type = learningTypeRepository.findById(learning.getType()).orElseThrow(
-                //TODO 1: EXCEPTION
-                ()-> new Exception("Subject Not Found")
+                ()-> new DoesNotExistException(DoesNotExistException.LEARNING_TYPE, learning.getType())
         );
         LearningSubject Subject = learningSubjectRepository.findById(learning.getSubject()).orElseThrow(
-                //TODO 2: EXCEPTION HERE
-                ()-> new Exception("Subject Not Found")
+                ()-> new DoesNotExistException(DoesNotExistException.LEARNING_SUBJECT, learning.getSubject())
         );
         newLearning.setType(type);
         newLearning.setSubject(Subject);
@@ -49,7 +49,7 @@ public class LearningService {
             }
             Learning found = list.get(0);
             if(found.getType().equals(type) && found.getSubject().equals(Subject)){
-                throw new Exception("Subject Already Exists");
+                throw new AlreadyExistsException(AlreadyExistsException.LEARNING_SUBJECT, Subject.getName());
             }
         }
         Learning savedLearning = learningRep.save(newLearning);
@@ -67,8 +67,7 @@ public class LearningService {
 
     public LearningResponseDTO getLearningById(UUID id) throws Exception {
         Learning learning = learningRep.findById(id).orElseThrow(
-                //TODO 2: EXCEPTION HERE
-                ()-> new Exception("learning Not Found")
+                ()-> new DoesNotExistException(DoesNotExistException.LEARNING, id)
         );
         return learningMapper.toLearningDTO(learning);
     }
@@ -83,8 +82,8 @@ public class LearningService {
     public List<LearningResponseDTO> getAllLearningBySubject(String subject) throws Exception {
         boolean SubjectExists = learningSubjectRepository.existsByName(subject);
         if(!SubjectExists){
-            //TODO 4: EXCEPTION HERE
-            throw new Exception("Subject Not Found");
+            throw new DoesNotExistException(DoesNotExistException.LEARNING_SUBJECT, subject);
+
         }
         LearningSubject learnSubject = learningSubjectRepository.findByName(subject);
         List<Learning> learnings = learningRep.findBySubject(learnSubject);
@@ -94,16 +93,13 @@ public class LearningService {
 
     public LearningResponseDTO updateLearning(UUID id, LearningRequestDTO learning) throws Exception {
         Learning learningToUpdate = learningRepository.findById(id).orElseThrow(
-                //TODO 2: EXCEPTION HERE
-                ()-> new Exception("learning Not Found")
+                ()-> new DoesNotExistException(DoesNotExistException.LEARNING, id)
         );
         LearningType type = learningTypeRepository.findById(learning.getType()).orElseThrow(
-                //TODO 1: EXCEPTION
-                ()-> new Exception("type Not Found")
+                ()-> new DoesNotExistException(DoesNotExistException.LEARNING_TYPE, learning.getType())
         );
         LearningSubject Subject = learningSubjectRepository.findById(learning.getSubject()).orElseThrow(
-                //TODO 2: EXCEPTION HERE
-                ()-> new Exception("Subject Not Found")
+                ()-> new DoesNotExistException(DoesNotExistException.LEARNING_SUBJECT, learning.getSubject())
         );
         learningToUpdate.setType(type);
         learningToUpdate.setSubject(Subject);

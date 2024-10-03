@@ -5,6 +5,8 @@ import com.sumerge.careertrack.learnings_svc.entities.LearningSubject;
 import com.sumerge.careertrack.learnings_svc.entities.enums.SubjectType;
 import com.sumerge.careertrack.learnings_svc.entities.requests.LearningSubjectRequestDTO;
 import com.sumerge.careertrack.learnings_svc.entities.responses.LearningSubjectResponseDTO;
+import com.sumerge.careertrack.learnings_svc.exceptions.AlreadyExistsException;
+import com.sumerge.careertrack.learnings_svc.exceptions.DoesNotExistException;
 import com.sumerge.careertrack.learnings_svc.mappers.LearningMapper;
 import com.sumerge.careertrack.learnings_svc.mappers.LearningSubjectMapper;
 import com.sumerge.careertrack.learnings_svc.mappers.LearningTypeMapper;
@@ -30,8 +32,7 @@ public class LearningSubjectService {
         SubjectType type = learning.getType().toLowerCase().equals("functional")?SubjectType.FUNCTIONAL:SubjectType.ORGANISATIONAL;
         boolean exists = learningSubjectRepository.existsByTypeAndName(type,learning.getName());
         if(exists){
-            //TODO 6: EXCEPTION HERE
-            throw new Exception("Subject Already Exists");
+            throw new AlreadyExistsException(AlreadyExistsException.LEARNING_SUBJECT, learning.getName());
         }
 
         LearningSubject newLearning = learningSubjectMapper.toLearningSubject(learning);
@@ -53,8 +54,8 @@ public class LearningSubjectService {
     public LearningSubjectResponseDTO getSubjectById(UUID subjectId) throws Exception {
         boolean exists = learningSubjectRepository.existsById(subjectId);
         if(!exists){
-            //TODO 7: EXCEPTION HERE
-            throw new Exception("Subject Not Found");
+            throw new DoesNotExistException(DoesNotExistException.LEARNING_SUBJECT, subjectId);
+
         }
         LearningSubject subject = learningSubjectRepository.findById(subjectId).get();
         return learningSubjectMapper.toLearningSubjectDTO(subject);
@@ -62,8 +63,8 @@ public class LearningSubjectService {
 
     public LearningSubjectResponseDTO updateSubject(UUID id, LearningSubjectRequestDTO learning) throws Exception {
         if(!learningSubjectRepository.existsById(id)){
-            //TODO 8: EXCEPTION HERE
-            throw new Exception("Subject Not Found");
+            throw new DoesNotExistException(DoesNotExistException.LEARNING_SUBJECT, id);
+
         }
         LearningSubject subject = learningSubjectRepository.findById(id).get();
         subject.setName(learning.getName());
@@ -79,8 +80,7 @@ public class LearningSubjectService {
 
     public void deleteSubject(UUID subjectId) throws Exception {
         if(!learningSubjectRepository.existsById(subjectId)){
-            //TODO 9: EXCEPTION HERE
-            throw new Exception("Subject Not Found");
+            throw new DoesNotExistException(DoesNotExistException.LEARNING_SUBJECT, subjectId);
         }
         LearningSubject subject= learningSubjectRepository.findById(subjectId).get();
         List<Learning> learnings = learningRep.findBySubject(subject);
@@ -88,8 +88,7 @@ public class LearningSubjectService {
             learningSubjectRepository.deleteById(subjectId);
         }
         else{
-            //TODO 10: EXCEPTION HERE
-            throw new Exception("Subject has learnings");
+            throw new AlreadyExistsException(AlreadyExistsException.LEARNING_HAS_SUBJECT,learnings.size(),subject.getName());
         }
 
     }
