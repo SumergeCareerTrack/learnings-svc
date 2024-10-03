@@ -1,6 +1,7 @@
 package com.sumerge.careertrack.learnings_svc.repositories;
 
 import com.sumerge.careertrack.learnings_svc.entities.Learning;
+import com.sumerge.careertrack.learnings_svc.entities.LearningSubject;
 import com.sumerge.careertrack.learnings_svc.entities.LearningType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -15,5 +16,7 @@ public interface LearningRepository extends JpaRepository<Learning, UUID> {
 
     boolean existsByUrlAndDescription(String url,String description);
 
-    Learning findByUrlAndDescription(String url, String description);
+    List<Learning> findByUrlAndDescription(String url, String description);
+
+    List<Learning> findBySubject(LearningSubject learnSubject);
 }

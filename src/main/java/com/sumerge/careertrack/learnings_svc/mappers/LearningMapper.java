@@ -1,6 +1,7 @@
 package com.sumerge.careertrack.learnings_svc.mappers;
 
 import com.sumerge.careertrack.learnings_svc.entities.Learning;
+import com.sumerge.careertrack.learnings_svc.entities.LearningSubject;
 import com.sumerge.careertrack.learnings_svc.entities.LearningType;
 import com.sumerge.careertrack.learnings_svc.entities.enums.SubjectType;
 import com.sumerge.careertrack.learnings_svc.entities.requests.LearningRequestDTO;
@@ -20,13 +21,17 @@ public interface LearningMapper {
     Learning toLearning(LearningRequestDTO learningDTO);
 
     @Mapping(target = "id", source = "id")
-    @Mapping(target = "typeName", source = "learning.type")
+    @Mapping(target = "typeName", source = "learning.type.name")
+    @Mapping(target = "typeBaseScore", source = "learning.type.baseScore")
+    @Mapping(target = "url", source = "url")
     @Mapping(target = "description", source = "description")
-    @Mapping(target = "subject", expression = "java(learning.getSubject().getName())")    @Mapping(target = "lengthInHours", source = "lengthInHours")
+    @Mapping(target = "subjectName", source = "learning.subject.name")
+    @Mapping(target = "subjectType", expression = "java(map(learning.getSubject()))")
+    @Mapping(target = "lengthInHours", source = "lengthInHours")
     LearningResponseDTO toLearningDTO(Learning learning);
 
-    default String map(LearningType type){
-        return type.getName().equals(SubjectType.FUNCTIONAL) ? "Functional" : "Organizational";
+    default String map(LearningSubject subject){
+        return subject.getType().equals(SubjectType.FUNCTIONAL) ? "Functional" : "Organizational";
     }
 
 }

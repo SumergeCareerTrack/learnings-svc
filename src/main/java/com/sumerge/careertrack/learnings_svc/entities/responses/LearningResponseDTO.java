@@ -19,10 +19,12 @@ public class LearningResponseDTO {
     private String url;
 
     private String typeName;
+    private int typeBaseScore;
 
     private String description;
 
-    private String subject;
+    private String subjectType;
+    private String subjectName;
 
     private float lengthInHours;
 }
