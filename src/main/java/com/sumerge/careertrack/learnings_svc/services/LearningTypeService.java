@@ -2,7 +2,7 @@ package com.sumerge.careertrack.learnings_svc.services;
 
 import com.sumerge.careertrack.learnings_svc.entities.Learning;
 import com.sumerge.careertrack.learnings_svc.entities.LearningType;
-import com.sumerge.careertrack.learnings_svc.entities.responses.LearningTypeRequestDTO;
+import com.sumerge.careertrack.learnings_svc.entities.requests.LearningTypeRequestDTO;
 import com.sumerge.careertrack.learnings_svc.entities.responses.LearningTypeResponseDTO;
 import com.sumerge.careertrack.learnings_svc.exceptions.AlreadyExistsException;
 import com.sumerge.careertrack.learnings_svc.exceptions.DoesNotExistException;
