@@ -12,7 +12,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 
 public interface LearningMapper {
-    @Mapping(target = "id", source = "id")
+    @Mapping(target = "id", ignore=true)
     @Mapping(target = "type", ignore=true)
     @Mapping(target = "subject", ignore=true)
     @Mapping(target = "url", source = "url")

@@ -55,7 +55,7 @@ public class LearningControllerTests {
         this.learningType = LearningType.builder().id(UUID.randomUUID()).name("Type Name").baseScore(10).build();
         this.learningSubject = LearningSubject.builder().id(UUID.randomUUID()).name("Subject Name").type(SubjectType.FUNCTIONAL).build();
         this.learning = Learning.builder().id(UUID.randomUUID()).type(this.learningType).url("www.TestUrl.com").description("Description").subject(this.learningSubject).build();
-        this.learningRequestDTO = LearningRequestDTO.builder().id(this.learning.getId()).type(this.learningType.getId()).url("www.TestUrl.com").description("Description").subject(this.learningSubject.getId()).build();
+        this.learningRequestDTO = LearningRequestDTO.builder().type(this.learningType.getId()).url("www.TestUrl.com").description("Description").subject(this.learningSubject.getId()).build();
         this.learningResponseDTO = LearningResponseDTO.builder().id(this.learning.getId()).typeName(this.learningType.getName()).typeBaseScore(this.learningType.getBaseScore()).url(this.learning.getUrl()).description(this.learning.getDescription()).subjectName(this.learningSubject.getName()).subjectType(this.learningSubject.getType().toString()).build();
     }
 
@@ -117,9 +117,9 @@ public class LearningControllerTests {
     }
     @Test
     public void getLearningById_fetchLearning_ReturnLearning() throws Exception {
-        when(learningService.getLearningById(this.learningRequestDTO.getId())).thenReturn((this.learningResponseDTO));
+        when(learningService.getLearningById(this.learning.getId())).thenReturn((this.learningResponseDTO));
         ResultActions response = mockMvc.perform(get("/learnings/{id}",
-                learningRequestDTO.getId()));
+                this.learning.getId()));
 
         response.andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -128,13 +128,13 @@ public class LearningControllerTests {
 
     @Test
     public void getLearningById_NoLearning_ThrowsDoesNotExist() throws Exception {
-        when(learningService.getLearningById(this.learningRequestDTO.getId())).thenThrow(new DoesNotExistException(DoesNotExistException.LEARNING, this.learningRequestDTO.getId()));
+        when(learningService.getLearningById(this.learning.getId())).thenThrow(new DoesNotExistException(DoesNotExistException.LEARNING, this.learning.getId()));
         ResultActions response = mockMvc.perform(get("/learnings/{id}",
-                learningRequestDTO.getId()));
+                this.learning.getId()));
 
         response.andExpect(status().isBadRequest())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof DoesNotExistException))
-                .andExpect(content().string(String.format(DoesNotExistException.LEARNING,this.learningRequestDTO.getId())));
+                .andExpect(content().string(String.format(DoesNotExistException.LEARNING,this.learning.getId())));
     }
     @Test
     public void getLearningsByType_fetchLearnings_ReturnListOfLearnings() throws Exception {
@@ -206,9 +206,9 @@ public class LearningControllerTests {
         learningResponseDTO.setSubjectType(SubjectType.ORGANISATIONAL.toString());
         learningResponseDTO.setTypeName("NEW TYPE");
         learningResponseDTO.setTypeBaseScore(2);
-        when(learningService.updateLearning(this.learningRequestDTO.getId(),this.learningRequestDTO)).thenReturn(learningResponseDTO);
+        when(learningService.updateLearning(this.learning.getId(),this.learningRequestDTO)).thenReturn(learningResponseDTO);
 
-        mockMvc.perform(put("/learnings/")
+        mockMvc.perform(put("/learnings/{learningId}",this.learning.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(learningRequestDTO)))
                 .andExpect(status().isOk())
@@ -219,10 +219,10 @@ public class LearningControllerTests {
 
     @Test
     public void updateLearning_LearningNotFound_ThrowsDoesNotExistException() throws Exception {
-        when(learningService.updateLearning(eq(learningRequestDTO.getId()), any(LearningRequestDTO.class)))
-                .thenThrow(new DoesNotExistException(DoesNotExistException.LEARNING, learningRequestDTO.getId()));
+        when(learningService.updateLearning(eq(this.learning.getId()), any(LearningRequestDTO.class)))
+                .thenThrow(new DoesNotExistException(DoesNotExistException.LEARNING, this.learning.getId()));
 
-        mockMvc.perform(put("/learnings/")
+        mockMvc.perform(put("/learnings/{learningId}",this.learning.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(learningRequestDTO)))
                 .andExpect(status().isBadRequest())
@@ -232,10 +232,10 @@ public class LearningControllerTests {
 
     @Test
     public void updateLearning_LearningTypeNotFound_ThrowsDoesNotExistException() throws Exception {
-        when(learningService.updateLearning(eq(learningRequestDTO.getId()), any(LearningRequestDTO.class)))
+        when(learningService.updateLearning(eq(this.learning.getId()), any(LearningRequestDTO.class)))
                 .thenThrow(new DoesNotExistException(DoesNotExistException.LEARNING_TYPE, learningRequestDTO.getType()));
 
-        mockMvc.perform(put("/learnings/")
+        mockMvc.perform(put("/learnings/{learningId}",this.learning.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(learningRequestDTO)))
                 .andExpect(status().isBadRequest())
@@ -245,10 +245,10 @@ public class LearningControllerTests {
 
     @Test
     public void updateLearning_LearningSubjectNotFound_ThrowsDoesNotExistException() throws Exception {
-        when(learningService.updateLearning(eq(learningRequestDTO.getId()), any(LearningRequestDTO.class)))
+        when(learningService.updateLearning(eq(this.learning.getId()), any(LearningRequestDTO.class)))
                 .thenThrow(new DoesNotExistException(DoesNotExistException.LEARNING_SUBJECT, learningRequestDTO.getSubject()));
 
-        mockMvc.perform(put("/learnings/")
+        mockMvc.perform(put("/learnings/{learningId}",this.learning.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(learningRequestDTO)))
                 .andExpect(status().isBadRequest())
@@ -257,7 +257,7 @@ public class LearningControllerTests {
     }
     @Test
     public void deleteLearning_Success_ReturnsOk() throws Exception {
-        doNothing().when(learningService).deleteLearning(this.learningRequestDTO.getId());
+        doNothing().when(learningService).deleteLearning(this.learning.getId());
 
         mockMvc.perform(delete("/learnings/")
                         .param("id", String.valueOf(this.learningResponseDTO.getId()))
@@ -267,8 +267,8 @@ public class LearningControllerTests {
 
     @Test
     public void deleteLearning_LearningNotFound_ThrowsDoesNotExistException() throws Exception {
-        doThrow(new DoesNotExistException(DoesNotExistException.LEARNING,this.learningRequestDTO.getId()))
-                .when(learningService).deleteLearning(this.learningRequestDTO.getId());
+        doThrow(new DoesNotExistException(DoesNotExistException.LEARNING,this.learning.getId()))
+                .when(learningService).deleteLearning(this.learning.getId());
 
         mockMvc.perform(delete("/learnings/")
                         .param("id", String.valueOf(this.learningResponseDTO.getId()))
@@ -276,7 +276,7 @@ public class LearningControllerTests {
                 .andExpect(status().isBadRequest())
                 .andExpect(status().isBadRequest())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof DoesNotExistException))
-                .andExpect(content().string(String.format(DoesNotExistException.LEARNING, learningRequestDTO.getId())));
+                .andExpect(content().string(String.format(DoesNotExistException.LEARNING, this.learning.getId())));
     }
 
 

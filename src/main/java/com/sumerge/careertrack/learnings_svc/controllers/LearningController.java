@@ -65,10 +65,10 @@ public class LearningController {
     /////////////* UPDATE METHODS */////////////
 
     @Tag(name = "Update")
-    @PutMapping("/")
+    @PutMapping("/{learningId}")
     public ResponseEntity<?> updateLearning(
-            @RequestBody LearningRequestDTO learning) throws Exception {
-        LearningResponseDTO updatedLearning = learningService.updateLearning(learning.getId(),learning);
+            @RequestBody LearningRequestDTO learning,@PathVariable UUID learningId) throws Exception {
+        LearningResponseDTO updatedLearning = learningService.updateLearning(learningId,learning);
         return ResponseEntity.ok(updatedLearning);
     }
 
