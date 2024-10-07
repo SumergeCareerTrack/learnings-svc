@@ -1,7 +1,6 @@
 package com.sumerge.careertrack.learnings_svc.exceptions;
 
 public class LearningsException extends RuntimeException {
-
     public LearningsException() {
         super();
     }

@@ -12,6 +12,7 @@ public class AlreadyExistsException extends LearningsException {
 
     public static final String BOOSTER = "Booster Type \"%s\" already exists.";
     public static final String BOOSTER_TYPE = "Booster Type \"%s\" already exists.";
+    public static final String PROOF_TYPE = "Proof Type \"%s\" already exists.";
 
 
     public AlreadyExistsException() {
@@ -26,4 +27,3 @@ public class AlreadyExistsException extends LearningsException {
         super(String.format(message, args));
     }
 }
-
