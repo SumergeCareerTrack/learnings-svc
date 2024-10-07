@@ -41,7 +41,7 @@ public class UserLearningsService {
         return userLearningMapper.toResponseDTO(userLearning);
     }
 
-    //TODO UserNeeded
+    //TODO UserNeeded & its
     public List<UserLearningResponseDTO> getUserLearningsByUserId(UUID userId) {
         //TODO find by user ID when user added
         List<UserLearning> userLearnings= userLearningsRepository.findAllById(userId);
@@ -104,6 +104,7 @@ public class UserLearningsService {
         return "User Learning deleted";
     }
 
+    //TODO add already approved exception
     public UserLearningResponseDTO approveLearning(UUID learningId){
         UserLearning userLearning = userLearningsRepository.findById(learningId)
                 .orElseThrow(() -> new DoesNotExistException(DoesNotExistException.USER_LEARNING, learningId));

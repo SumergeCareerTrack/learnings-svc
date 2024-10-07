@@ -32,9 +32,8 @@ public class ProofTypeService {
     }
 
     public ProofTypeResponseDTO createProofType(ProofTypeRequestDTO proofTypeRequestDTO) {
-        System.out.println(proofTypeRequestDTO);
         ProofType proofType = proofTypeMapper.toProofType(proofTypeRequestDTO);
-        //TODO How do you handle nulls with exceptions?
+        //TODO How do you handle nulls with exceptions **if handled add test**?
         return proofTypeMapper.toResponseDTO(proofTypesRepository.save(proofType));
     }
 

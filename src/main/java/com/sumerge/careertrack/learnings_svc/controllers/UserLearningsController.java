@@ -29,7 +29,7 @@ public class UserLearningsController {
        return ResponseEntity.ok(userLearningsService.getUserLearningByUserLearningId(learningId));
     }
 
-    //TODO needs user
+    //TODO needs user -> tests**
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<UserLearningResponseDTO>> getAllUserLearningsByUserId(@PathVariable UUID userId) {
        return ResponseEntity.ok(userLearningsService.getUserLearningsByUserId(userId));
