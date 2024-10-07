@@ -78,7 +78,7 @@ public class LearningControllerTests {
                 .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(this.learningRequestDTO)));
 
 
-        response.andExpect(status().isBadRequest())
+        response.andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof DoesNotExistException))
                 .andExpect(content().string(String.format(DoesNotExistException.LEARNING_TYPE,this.learningRequestDTO.getType())));
     }
@@ -90,7 +90,7 @@ public class LearningControllerTests {
                 .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(this.learningRequestDTO)));
 
 
-        response.andExpect(status().isBadRequest())
+        response.andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof DoesNotExistException))
                 .andExpect(content().string(String.format(DoesNotExistException.LEARNING_SUBJECT,this.learningRequestDTO.getSubject())));
     }
@@ -132,7 +132,7 @@ public class LearningControllerTests {
         ResultActions response = mockMvc.perform(get("/learnings/{id}",
                 this.learning.getId()));
 
-        response.andExpect(status().isBadRequest())
+        response.andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof DoesNotExistException))
                 .andExpect(content().string(String.format(DoesNotExistException.LEARNING,this.learning.getId())));
     }
@@ -162,7 +162,7 @@ public class LearningControllerTests {
         ResultActions response = mockMvc.perform(get("/learnings/type")
                 .param("type", this.learningType.getName()));
 
-        response.andExpect(status().isBadRequest())
+        response.andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof DoesNotExistException))
                 .andExpect(content().string(String.format(DoesNotExistException.LEARNING_TYPE,this.learningType.getName())));
     }
@@ -193,7 +193,7 @@ public class LearningControllerTests {
         ResultActions response = mockMvc.perform(get("/learnings/subject")
                 .param("subject", this.learningSubject.getName()));
 
-        response.andExpect(status().isBadRequest())
+        response.andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof DoesNotExistException))
                 .andExpect(content().string(String.format(DoesNotExistException.LEARNING_SUBJECT,this.learningSubject.getName())));
     }
@@ -225,7 +225,7 @@ public class LearningControllerTests {
         mockMvc.perform(put("/learnings/{learningId}",this.learning.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(learningRequestDTO)))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof DoesNotExistException))
                 .andExpect(content().string(String.format(DoesNotExistException.LEARNING, learningResponseDTO.getId())));
     }
@@ -238,7 +238,7 @@ public class LearningControllerTests {
         mockMvc.perform(put("/learnings/{learningId}",this.learning.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(learningRequestDTO)))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof DoesNotExistException))
                 .andExpect(content().string(String.format(DoesNotExistException.LEARNING_TYPE, learningRequestDTO.getType())));
     }
@@ -251,7 +251,7 @@ public class LearningControllerTests {
         mockMvc.perform(put("/learnings/{learningId}",this.learning.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(learningRequestDTO)))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof DoesNotExistException))
                 .andExpect(content().string(String.format(DoesNotExistException.LEARNING_SUBJECT, learningRequestDTO.getSubject())));
     }
@@ -273,8 +273,7 @@ public class LearningControllerTests {
         mockMvc.perform(delete("/learnings/")
                         .param("id", String.valueOf(this.learningResponseDTO.getId()))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof DoesNotExistException))
                 .andExpect(content().string(String.format(DoesNotExistException.LEARNING, this.learning.getId())));
     }
