@@ -2,11 +2,12 @@ package com.sumerge.careertrack.learnings_svc.controllers;
 
 
 import com.sumerge.careertrack.learnings_svc.entities.LearningType;
-import com.sumerge.careertrack.learnings_svc.entities.responses.LearningTypeRequestDTO;
+import com.sumerge.careertrack.learnings_svc.entities.requests.LearningTypeRequestDTO;
 import com.sumerge.careertrack.learnings_svc.entities.responses.LearningTypeResponseDTO;
 import com.sumerge.careertrack.learnings_svc.services.LearningTypeService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.websocket.server.PathParam;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,9 +18,9 @@ import java.util.UUID;
 @CrossOrigin
 @RestController
 @RequestMapping("/learnings/types")
+@RequiredArgsConstructor
 public class LearningTypeController {
-    @Autowired
-    private LearningTypeService learningTypeService;
+    private final LearningTypeService learningTypeService;
 
     /////////////* POSt METHODS */////////////
     @Tag(name = "Post")
@@ -49,10 +50,10 @@ public class LearningTypeController {
     /////////////* UPDATE METHODS */////////////
 
     @Tag(name = "Update")
-    @PutMapping("/")
+    @PutMapping("/{typeId}")
     public ResponseEntity<LearningTypeResponseDTO> updateType(
-            @RequestBody LearningTypeRequestDTO learningType) throws Exception {
-        LearningTypeResponseDTO updatedLearning = learningTypeService.updateType(learningType.getId(),learningType);
+            @RequestBody LearningTypeRequestDTO learningType,@PathVariable UUID typeId) throws Exception {
+        LearningTypeResponseDTO updatedLearning = learningTypeService.updateType(typeId,learningType);
         return ResponseEntity.ok(updatedLearning);
     }
 

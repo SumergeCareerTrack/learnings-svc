@@ -12,7 +12,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 
 public interface LearningMapper {
-    @Mapping(target = "id", source = "id")
+    @Mapping(target = "id", ignore=true)
     @Mapping(target = "type", ignore=true)
     @Mapping(target = "subject", ignore=true)
     @Mapping(target = "url", source = "url")
@@ -29,7 +29,7 @@ public interface LearningMapper {
     @Mapping(target = "subjectType", expression = "java(map(learning.getSubject()))")
     @Mapping(target = "lengthInHours", source = "lengthInHours")
     LearningResponseDTO toLearningDTO(Learning learning);
-
+//TODO REVIEW if the base value should be Functional or Organisational
     default String map(LearningSubject subject){
         return subject.getType().equals(SubjectType.FUNCTIONAL) ? "Functional" : "Organizational";
     }

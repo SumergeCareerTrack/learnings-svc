@@ -25,10 +25,10 @@ public class LearningSubjectService {
 
     private final LearningSubjectMapper learningSubjectMapper;
     private final LearningRepository learningRep;
-    private final LearningTypeRepository learningTypeRepository;
     private final LearningSubjectRepository learningSubjectRepository;
 
     public LearningSubjectResponseDTO createSubject(LearningSubjectRequestDTO learning) throws Exception {
+        //TODO make it Functional if equals or what ???
         SubjectType type = learning.getType().toLowerCase().equals("functional")?SubjectType.FUNCTIONAL:SubjectType.ORGANISATIONAL;
         boolean exists = learningSubjectRepository.existsByTypeAndName(type,learning.getName());
         if(exists){
@@ -36,6 +36,7 @@ public class LearningSubjectService {
         }
 
         LearningSubject newLearning = learningSubjectMapper.toLearningSubject(learning);
+        //TODO samething for Functional and Org
         if(learning.getType().toLowerCase().equals("functional")){
             newLearning.setType(SubjectType.FUNCTIONAL);
         }
@@ -61,6 +62,8 @@ public class LearningSubjectService {
         return learningSubjectMapper.toLearningSubjectDTO(subject);
     }
 
+
+    //TODO Review If the default value Should be functional or not
     public LearningSubjectResponseDTO updateSubject(UUID id, LearningSubjectRequestDTO learning) throws Exception {
         if(!learningSubjectRepository.existsById(id)){
             throw new DoesNotExistException(DoesNotExistException.LEARNING_SUBJECT, id);

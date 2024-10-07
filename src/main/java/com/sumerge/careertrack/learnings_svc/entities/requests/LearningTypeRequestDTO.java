@@ -1,4 +1,4 @@
-package com.sumerge.careertrack.learnings_svc.entities.responses;
+package com.sumerge.careertrack.learnings_svc.entities.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LearningTypeRequestDTO {
-    private UUID id;
 
     private String name;
 

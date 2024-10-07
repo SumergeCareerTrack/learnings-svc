@@ -12,8 +12,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LearningRequestDTO {
-    @lombok.NonNull
-    private UUID id;
 
     @lombok.NonNull
     private UUID type;

@@ -2,7 +2,7 @@ package com.sumerge.careertrack.learnings_svc.services;
 
 import com.sumerge.careertrack.learnings_svc.entities.Learning;
 import com.sumerge.careertrack.learnings_svc.entities.LearningType;
-import com.sumerge.careertrack.learnings_svc.entities.responses.LearningTypeRequestDTO;
+import com.sumerge.careertrack.learnings_svc.entities.requests.LearningTypeRequestDTO;
 import com.sumerge.careertrack.learnings_svc.entities.responses.LearningTypeResponseDTO;
 import com.sumerge.careertrack.learnings_svc.exceptions.AlreadyExistsException;
 import com.sumerge.careertrack.learnings_svc.exceptions.DoesNotExistException;
@@ -18,8 +18,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class LearningTypeService {
     private final LearningRepository learningRep;
     private final LearningTypeMapper learningTypeMapper;
@@ -67,7 +67,6 @@ public class LearningTypeService {
         LearningType type = learningTypeRepository.findById(id).get();
         List<Learning> learnings = learningRep.findByType(type);
         if(!learnings.isEmpty()){
-            //TODO 11: EXCEPTION HERE
             throw new AlreadyExistsException(AlreadyExistsException.LEARNING_HAS_TYPE,learnings.size(),type.getName());
         }
         else{
