@@ -80,7 +80,7 @@ public class LearningTypeControllerTests {
                 .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(this.learningTypeRequestDTO)));
 
 
-        response.andExpect(status().isBadRequest())
+        response.andExpect(status().isConflict())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof AlreadyExistsException))
                 .andExpect(content().string(String.format(AlreadyExistsException.LEARNING_TYPE, this.learningTypeRequestDTO.getName())));
 
@@ -123,7 +123,7 @@ public class LearningTypeControllerTests {
         ResultActions response = mockMvc.perform(get("/learnings/types/{id}", this.learningType.getId()));
 
 
-        response.andExpect(status().isBadRequest())
+        response.andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof DoesNotExistException))
                 .andExpect(content().string(String.format(DoesNotExistException.LEARNING_TYPE, this.learningType.getId())));
  }
@@ -144,7 +144,7 @@ public class LearningTypeControllerTests {
                 .thenThrow(new DoesNotExistException(DoesNotExistException.LEARNING_TYPE, this.learningType.getId()));
             mockMvc.perform(put("/learnings/types/{id}", this.learningType.getId())
                         .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(this.learningTypeRequestDTO)))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof DoesNotExistException))
                 .andExpect(content().string(String.format(DoesNotExistException.LEARNING_TYPE, this.learningType.getId())));
     }
@@ -164,7 +164,7 @@ public class LearningTypeControllerTests {
         mockMvc.perform(delete("/learnings/types/")
                         .param("id", String.valueOf(this.learningTypeResponseDTO.getId()))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof DoesNotExistException))
                 .andExpect(content().string(String.format(DoesNotExistException.LEARNING_TYPE, this.learningType.getId())));
     }
@@ -176,7 +176,7 @@ public class LearningTypeControllerTests {
         mockMvc.perform(delete("/learnings/types/")
                         .param("id", String.valueOf(this.learningTypeResponseDTO.getId()))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isConflict())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof AlreadyExistsException))
                 .andExpect(content().string(String.format(AlreadyExistsException.LEARNING_HAS_TYPE, this.learningTypeRequestDTO.getName())));
     }
