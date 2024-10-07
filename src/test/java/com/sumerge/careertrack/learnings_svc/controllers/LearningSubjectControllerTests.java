@@ -7,12 +7,10 @@ import com.sumerge.careertrack.learnings_svc.entities.LearningType;
 import com.sumerge.careertrack.learnings_svc.entities.enums.SubjectType;
 import com.sumerge.careertrack.learnings_svc.entities.requests.LearningSubjectRequestDTO;
 import com.sumerge.careertrack.learnings_svc.entities.responses.LearningSubjectResponseDTO;
-import com.sumerge.careertrack.learnings_svc.entities.responses.LearningTypeRequestDTO;
-import com.sumerge.careertrack.learnings_svc.entities.responses.LearningTypeResponseDTO;
+
 import com.sumerge.careertrack.learnings_svc.exceptions.AlreadyExistsException;
 import com.sumerge.careertrack.learnings_svc.exceptions.DoesNotExistException;
 import com.sumerge.careertrack.learnings_svc.services.LearningSubjectService;
-import com.sumerge.careertrack.learnings_svc.services.LearningTypeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -58,7 +56,7 @@ public class LearningSubjectControllerTests {
         this.learningType = LearningType.builder().id(UUID.randomUUID()).name("Type Name").baseScore(10).build();
         this.learningSubject = LearningSubject.builder().id(UUID.randomUUID()).name("Subject Name").type(SubjectType.FUNCTIONAL).build();
         this.learning = Learning.builder().id(UUID.randomUUID()).type(this.learningType).url("www.TestUrl.com").description("Description").subject(this.learningSubject).build();
-        this.learningSubjectRequestDTO = LearningSubjectRequestDTO.builder().id(this.learningType.getId()).name(this.learningType.getName()).type(this.learningType.getName()).build();
+        this.learningSubjectRequestDTO = LearningSubjectRequestDTO.builder().name(this.learningType.getName()).type(this.learningType.getName()).build();
         this.learningSubjectResponseDTO = LearningSubjectResponseDTO.builder().id(this.learningType.getId()).name(this.learningType.getName()).type(this.learningType.getName()).build();
     }
 
@@ -109,8 +107,8 @@ public class LearningSubjectControllerTests {
 
     @Test
     public void getSubjectById_FetchType_thenReturns200() throws Exception {
-        when(learningSubjectService.getSubjectById(this.learningSubjectRequestDTO.getId())).thenReturn(this.learningSubjectResponseDTO);
-        ResultActions response = mockMvc.perform(get("/learnings/subjects/{subjectId}", this.learningSubjectRequestDTO.getId())
+        when(learningSubjectService.getSubjectById(this.learningSubject.getId())).thenReturn(this.learningSubjectResponseDTO);
+        ResultActions response = mockMvc.perform(get("/learnings/subjects/{subjectId}", this.learningSubject.getId())
                 .contentType(MediaType.APPLICATION_JSON));
 
         response.andExpect(status().isOk())
@@ -119,10 +117,10 @@ public class LearningSubjectControllerTests {
     }
     @Test
     public void getSubjectById_DoesntExist_ThrowDoesntExist() throws Exception {
-        when(learningSubjectService.getSubjectById(this.learningSubjectRequestDTO.getId())).thenThrow(
+        when(learningSubjectService.getSubjectById(this.learningSubject.getId())).thenThrow(
                 new DoesNotExistException(DoesNotExistException.LEARNING_SUBJECT, this.learningSubjectRequestDTO.getName())
         );
-        ResultActions response = mockMvc.perform(get("/learnings/subjects/{subjectId}", this.learningSubjectRequestDTO.getId()));
+        ResultActions response = mockMvc.perform(get("/learnings/subjects/{subjectId}", this.learningSubject.getId()));
 
 
         response.andExpect(status().isBadRequest())
@@ -133,8 +131,8 @@ public class LearningSubjectControllerTests {
     public void updateSubject_whenValidInput_thenReturns200() throws Exception {
         learningSubjectResponseDTO.setName("New Name");
         learningSubjectResponseDTO.setType(SubjectType.FUNCTIONAL.toString());
-        when(learningSubjectService.updateSubject(this.learningSubjectRequestDTO.getId(), this.learningSubjectRequestDTO)).thenReturn(this.learningSubjectResponseDTO);
-        mockMvc.perform(put("/learnings/subjects/")
+        when(learningSubjectService.updateSubject(this.learningSubject.getId(), this.learningSubjectRequestDTO)).thenReturn(this.learningSubjectResponseDTO);
+        mockMvc.perform(put("/learnings/subjects/{id}", this.learningSubject.getId())
                         .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(this.learningSubjectRequestDTO)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -142,9 +140,9 @@ public class LearningSubjectControllerTests {
     }
     @Test
     public void updateSubject_SubjectNotFound_ThrowsDoesNotExist() throws Exception {
-        when(learningSubjectService.updateSubject(this.learningSubjectRequestDTO.getId(), this.learningSubjectRequestDTO))
+        when(learningSubjectService.updateSubject(this.learningSubject.getId(), this.learningSubjectRequestDTO))
                 .thenThrow(new DoesNotExistException(DoesNotExistException.LEARNING_SUBJECT, this.learningSubjectRequestDTO.getName()));
-        mockMvc.perform(put("/learnings/subjects/")
+        mockMvc.perform(put("/learnings/subjects/{id}", this.learningSubject.getId())
                         .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(this.learningSubjectRequestDTO)))
                 .andExpect(status().isBadRequest())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof DoesNotExistException))
@@ -152,7 +150,7 @@ public class LearningSubjectControllerTests {
     }
     @Test
     public void deleteSubject_Success_ReturnsOk() throws Exception {
-        doNothing().when(learningSubjectService).deleteSubject(this.learningSubjectRequestDTO.getId());
+        doNothing().when(learningSubjectService).deleteSubject(this.learningSubject.getId());
 
         mockMvc.perform(delete("/learnings/subjects/")
                         .param("id", String.valueOf(this.learningSubjectResponseDTO.getId()))
@@ -162,10 +160,10 @@ public class LearningSubjectControllerTests {
     @Test
     public void deleteSubject_SubjectDoesntExist_ThrowsDoesntExist() throws Exception {
         doThrow(new DoesNotExistException(DoesNotExistException.LEARNING_SUBJECT,this.learningSubjectRequestDTO.getName()))
-                .when(learningSubjectService).deleteSubject(this.learningSubjectRequestDTO.getId());
+                .when(learningSubjectService).deleteSubject(this.learningSubject.getId());
 
         mockMvc.perform(delete("/learnings/subjects/")
-                        .param("id", String.valueOf(this.learningSubjectResponseDTO.getId()))
+                        .param("id", this.learningSubject.getId().toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof DoesNotExistException))
@@ -174,10 +172,10 @@ public class LearningSubjectControllerTests {
     @Test
     public void deleteSubject_LearningUsesSubject_ThrowsAlreadyExists() throws Exception {
         doThrow(new AlreadyExistsException(AlreadyExistsException.LEARNING_HAS_SUBJECT,this.learningSubjectRequestDTO.getName()))
-                .when(learningSubjectService).deleteSubject(this.learningSubjectRequestDTO.getId());
+                .when(learningSubjectService).deleteSubject(this.learningSubject.getId());
 
         mockMvc.perform(delete("/learnings/subjects/")
-                        .param("id", String.valueOf(this.learningSubjectResponseDTO.getId()))
+                        .param("id", String.valueOf(this.learningSubject.getId()))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof AlreadyExistsException))

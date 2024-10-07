@@ -49,10 +49,10 @@ public class LearningSubjectController {
     /////////////* UPDATE METHODS */////////////
 
     @Tag(name = "Update")
-    @PutMapping("/")
+    @PutMapping("/{SubjectId}")
     public ResponseEntity<LearningSubjectResponseDTO> updateSubject(
-            @RequestBody LearningSubjectRequestDTO learning) throws Exception {
-        LearningSubjectResponseDTO updatedLearning = learningSubjectService.updateSubject(learning.getId(),learning);
+            @RequestBody LearningSubjectRequestDTO learning,@PathVariable UUID SubjectId) throws Exception {
+        LearningSubjectResponseDTO updatedLearning = learningSubjectService.updateSubject(SubjectId,learning);
         return ResponseEntity.ok(updatedLearning);
 
     }
