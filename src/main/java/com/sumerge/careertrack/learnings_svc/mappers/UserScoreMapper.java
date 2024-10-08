@@ -5,7 +5,7 @@ import org.mapstruct.Mapper;
 import com.sumerge.careertrack.learnings_svc.entities.UserScore;
 import com.sumerge.careertrack.learnings_svc.entities.responses.UserScoreResponseDTO;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface UserScoreMapper {
 
     public UserScoreResponseDTO toDto(UserScore userScore);

@@ -4,6 +4,7 @@ public class AlreadyExistsException extends LearningsException {
 
     public static final String LEVEL_NAME = "Scoreboard Level \"%s\" already exists.";
     public static final String LEVEL_SCORE = "Scoreboard Level with minimum score \"%d\" already exists.";
+    public static final String SCORE = "A score for user \"%d\" already exists.";
 
     public AlreadyExistsException() {
         super();

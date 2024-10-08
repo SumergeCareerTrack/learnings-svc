@@ -1,13 +1,12 @@
 package com.sumerge.careertrack.learnings_svc.services;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
 import com.sumerge.careertrack.learnings_svc.entities.UserScore;
-import com.sumerge.careertrack.learnings_svc.entities.UserScore.UserScoreBuilder;
-import com.sumerge.careertrack.learnings_svc.entities.responses.UserScoreResponseDTO;
-import com.sumerge.careertrack.learnings_svc.mappers.UserScoreMapper;
+import com.sumerge.careertrack.learnings_svc.exceptions.AlreadyExistsException;
 import com.sumerge.careertrack.learnings_svc.repositories.UserScoreRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -16,16 +15,34 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserScoreService {
 
-    private UserScoreRepository repository;
-    private UserScoreMapper mapper;
+    public static final String LEADERBOARD_KEY = "LEADERBOARD";
+    private final UserScoreRepository repository;
 
-    private static UserScoreBuilder NULL_SCORE = UserScore.builder().score(0);
-
-    public UserScoreResponseDTO getUserScore(UUID userId) {
-        UserScore userScore = repository.findById(userId)
-                .orElse(NULL_SCORE.userId(userId).build());
-
-        return mapper.toDto(userScore);
+    public List<Object> getTopPlayers(int topN) {
+        return repository.getTopPlayers(topN);
     }
 
+    public UserScore getUserScore(UUID userId) {
+        return repository.findById(userId);
+    }
+
+    public List<UserScore> getAll() {
+        return repository.findAll();
+    }
+
+    public void add(UUID playerId, int score) {
+        if (repository.existsById(playerId)) {
+            throw new AlreadyExistsException(AlreadyExistsException.SCORE, playerId);
+        }
+
+        repository.save(playerId, score);
+    }
+
+    public void addToUserScore(UUID playerId, int delta) {
+        repository.addToUserScore(playerId, delta);
+    }
+
+    public void removeScore(UUID playerId) {
+        repository.removeScore(playerId);
+    }
 }
