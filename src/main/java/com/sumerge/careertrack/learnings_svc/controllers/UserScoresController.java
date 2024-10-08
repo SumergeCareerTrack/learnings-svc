@@ -32,7 +32,7 @@ public class UserScoresController {
     private final UserScoreService service;
     private final UserScoreMapper mapper;
 
-    @GetMapping("/")
+    @GetMapping()
     public List<UserScoreResponseDTO> getAll() {
         List<UserScore> scores = service.getAll();
         return scores.stream().map(mapper::toDto).collect(Collectors.toList());
@@ -56,7 +56,7 @@ public class UserScoresController {
         service.addToUserScore(userId, amount);
     }
 
-    @DeleteMapping
+    @DeleteMapping("{userId}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteUserScore(@PathVariable UUID userId) {
         service.removeScore(userId);
