@@ -152,7 +152,7 @@ public class LearningSubjectServiceTests {
     @Test
     public void deleteSubject_SubjectHasLearnings_ThrowsAlreadyExistsException() {
         LearningType type = LearningType.builder().id(UUID.randomUUID()).name("Functional").baseScore(0).build();
-        Learning learning = Learning.builder().id(UUID.randomUUID()).subject(learningSubject).type(type).lengthInHours(123).url("URL")
+        Learning learning = Learning.builder().title("title 1").id(UUID.randomUUID()).subject(learningSubject).type(type).lengthInHours(123).url("URL")
                 .description("DESC").build();
         when(learningSubjectRepository.existsById(learningSubject.getId())).thenReturn(true);
         when(learningSubjectRepository.findById(learningSubject.getId())).thenReturn(Optional.of(this.learningSubject));

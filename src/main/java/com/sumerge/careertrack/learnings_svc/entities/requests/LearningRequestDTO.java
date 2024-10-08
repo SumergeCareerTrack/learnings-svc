@@ -19,6 +19,8 @@ public class LearningRequestDTO {
     @lombok.NonNull
     private UUID subject;
 
+    private String title;
+
     private String url;
 
     private String description;

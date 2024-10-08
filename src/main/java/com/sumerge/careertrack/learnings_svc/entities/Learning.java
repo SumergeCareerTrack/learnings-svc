@@ -23,6 +23,8 @@ public class Learning {
     @JoinColumn(nullable = false)
     private LearningType type;
 
+    private String title;
+
     private String url;
 
     private String description;

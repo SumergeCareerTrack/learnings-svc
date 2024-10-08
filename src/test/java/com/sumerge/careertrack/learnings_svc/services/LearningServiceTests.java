@@ -57,11 +57,11 @@ public class LearningServiceTests {
                 .name("Type1").build();
         learningSubject= LearningSubject.builder().id(UUID.randomUUID())
                 .type(SubjectType.FUNCTIONAL).name("Subject1").build();
-        learning=Learning.builder().id(UUID.randomUUID()).description("Description")
+        learning=Learning.builder().title("Title 1").id(UUID.randomUUID()).description("Description")
                 .url("URL").type(learningType).subject(learningSubject).lengthInHours(22).build();
-        learningRequestDTO=LearningRequestDTO.builder().description("Description")
+        learningRequestDTO=LearningRequestDTO.builder().title(this.learning.getTitle()).description("Description")
                 .url("URL").type(learningType.getId()).subject(learningSubject.getId()).lengthInHours(22).build();
-        learningResponseDTO=LearningResponseDTO.builder().id(this.learning.getId()).typeName(this.learningType.getName())
+        learningResponseDTO=LearningResponseDTO.builder().title(this.learning.getTitle()).id(this.learning.getId()).typeName(this.learningType.getName())
                 .subjectType(this.learningSubject.getType().toString()).typeBaseScore(this.learningType.getBaseScore())
                 .url(this.learning.getUrl()).subjectName(this.learningSubject.getName())
                 .description(this.learning.getDescription()).lengthInHours(this.learning.getLengthInHours()).build();

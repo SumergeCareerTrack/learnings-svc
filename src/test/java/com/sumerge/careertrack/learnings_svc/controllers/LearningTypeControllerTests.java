@@ -56,7 +56,7 @@ public class LearningTypeControllerTests {
         this.objectMapper = new ObjectMapper();
         this.learningType = LearningType.builder().id(UUID.randomUUID()).name("Type Name").baseScore(10).build();
         this.learningSubject = LearningSubject.builder().id(UUID.randomUUID()).name("Subject Name").type(SubjectType.FUNCTIONAL).build();
-        this.learning = Learning.builder().id(UUID.randomUUID()).type(this.learningType).url("www.TestUrl.com").description("Description").subject(this.learningSubject).build();
+        this.learning = Learning.builder().title("Title 1").id(UUID.randomUUID()).type(this.learningType).url("www.TestUrl.com").description("Description").subject(this.learningSubject).build();
         this.learningTypeRequestDTO = LearningTypeRequestDTO.builder().name(this.learningType.getName()).baseScore(this.learningType.getBaseScore()).build();
         this.learningTypeResponseDTO = LearningTypeResponseDTO.builder().id(this.learningType.getId()).name(this.learningType.getName()).baseScore(this.learningType.getBaseScore()).build();
     }
