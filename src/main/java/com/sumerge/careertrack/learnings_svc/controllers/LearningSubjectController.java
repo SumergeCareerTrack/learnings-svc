@@ -1,18 +1,26 @@
 package com.sumerge.careertrack.learnings_svc.controllers;
 
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.sumerge.careertrack.learnings_svc.entities.requests.LearningSubjectRequestDTO;
 import com.sumerge.careertrack.learnings_svc.entities.responses.LearningSubjectResponseDTO;
 import com.sumerge.careertrack.learnings_svc.services.LearningSubjectService;
+
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.UUID;
 
 @CrossOrigin
 @RestController
@@ -22,7 +30,7 @@ public class LearningSubjectController {
 
     private final LearningSubjectService learningSubjectService;
 
-    /////////////* POSt METHODS */////////////
+    ///////////// * POSt METHODS */////////////
     @Tag(name = "Post")
     @PostMapping("/")
     public ResponseEntity<LearningSubjectResponseDTO> createLearningSubject(
@@ -31,13 +39,14 @@ public class LearningSubjectController {
         return ResponseEntity.ok(newLearning);
     }
 
-    /////////////* GET METHODS */////////////
+    ///////////// * GET METHODS */////////////
     @Tag(name = "Get Subjects")
     @GetMapping("/")
     public ResponseEntity<List<LearningSubjectResponseDTO>> getAllSubjects() {
         List<LearningSubjectResponseDTO> subjects = learningSubjectService.getAllSubjects();
         return ResponseEntity.ok(subjects);
     }
+
     @Tag(name = "Get Subjects")
     @GetMapping("/{subjectId}")
     public ResponseEntity<LearningSubjectResponseDTO> getSubjectById(
@@ -46,23 +55,23 @@ public class LearningSubjectController {
         return ResponseEntity.ok(subject);
     }
 
-    /////////////* UPDATE METHODS */////////////
+    ///////////// * UPDATE METHODS */////////////
 
     @Tag(name = "Update")
     @PutMapping("/{SubjectId}")
     public ResponseEntity<LearningSubjectResponseDTO> updateSubject(
-            @RequestBody LearningSubjectRequestDTO learning,@PathVariable UUID SubjectId) throws Exception {
-        LearningSubjectResponseDTO updatedLearning = learningSubjectService.updateSubject(SubjectId,learning);
+            @RequestBody LearningSubjectRequestDTO learning, @PathVariable UUID SubjectId) throws Exception {
+        LearningSubjectResponseDTO updatedLearning = learningSubjectService.updateSubject(SubjectId, learning);
         return ResponseEntity.ok(updatedLearning);
 
     }
 
-    /////////////* DELETE METHODS */////////////
+    ///////////// * DELETE METHODS */////////////
 
     @Tag(name = "Delete")
     @DeleteMapping("/")
     public ResponseEntity<?> deleteSubject(
-            @PathParam("id ")  UUID id) throws Exception {
+            @PathParam("id ") UUID id) throws Exception {
         learningSubjectService.deleteSubject(id);
         return ResponseEntity.ok().build();
 

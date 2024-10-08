@@ -1,14 +1,23 @@
 package com.sumerge.careertrack.learnings_svc.controllers;
 
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.sumerge.careertrack.learnings_svc.entities.requests.ProofTypeRequestDTO;
 import com.sumerge.careertrack.learnings_svc.entities.responses.ProofTypeResponseDTO;
 import com.sumerge.careertrack.learnings_svc.services.ProofTypeService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.UUID;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/proofs")
@@ -33,7 +42,8 @@ public class ProofTypeController {
     }
 
     @PutMapping("/{typeId}")
-    public ResponseEntity<ProofTypeResponseDTO> updateProofType(@PathVariable UUID typeId, @RequestBody ProofTypeRequestDTO proofTypeRequestDTO) {
+    public ResponseEntity<ProofTypeResponseDTO> updateProofType(@PathVariable UUID typeId,
+            @RequestBody ProofTypeRequestDTO proofTypeRequestDTO) {
         return ResponseEntity.ok(proofTypeService.updateProofType(typeId, proofTypeRequestDTO));
     }
 

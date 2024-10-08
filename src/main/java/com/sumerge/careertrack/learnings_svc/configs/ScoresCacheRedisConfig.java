@@ -11,7 +11,6 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 
 @Configuration
 @EnableRedisHttpSession
-// @EnableRedisRepositories("com.sumerge.careertrack.learning_svc.repositories")
 public class ScoresCacheRedisConfig {
 
     @Value("${spring.data.redis.usercache.host}")
