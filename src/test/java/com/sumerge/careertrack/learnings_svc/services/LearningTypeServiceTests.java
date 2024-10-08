@@ -127,7 +127,7 @@ public class LearningTypeServiceTests {
     public void deleteType_TypeFound_HasLearnings_ThrowsAlreadyExists() throws Exception{
         UUID id = UUID.randomUUID();
         LearningSubject subject=LearningSubject.builder().id(UUID.randomUUID()).name("Subject Test").type(SubjectType.FUNCTIONAL).build();
-        Learning learning = Learning.builder().id(UUID.randomUUID()).subject(subject).type(type).lengthInHours(123).url("URL")
+        Learning learning = Learning.builder().title("test 1").id(UUID.randomUUID()).subject(subject).type(type).lengthInHours(123).url("URL")
                 .description("DESC").build();
         when(learningTypeRepository.existsById(id)).thenReturn(true);
         when(learningTypeRepository.findById(id)).thenReturn(java.util.Optional.of(type));

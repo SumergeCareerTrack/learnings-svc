@@ -54,9 +54,9 @@ public class LearningControllerTests {
         this.objectMapper = new ObjectMapper();
         this.learningType = LearningType.builder().id(UUID.randomUUID()).name("Type Name").baseScore(10).build();
         this.learningSubject = LearningSubject.builder().id(UUID.randomUUID()).name("Subject Name").type(SubjectType.FUNCTIONAL).build();
-        this.learning = Learning.builder().id(UUID.randomUUID()).type(this.learningType).url("www.TestUrl.com").description("Description").subject(this.learningSubject).build();
-        this.learningRequestDTO = LearningRequestDTO.builder().type(this.learningType.getId()).url("www.TestUrl.com").description("Description").subject(this.learningSubject.getId()).build();
-        this.learningResponseDTO = LearningResponseDTO.builder().id(this.learning.getId()).typeName(this.learningType.getName()).typeBaseScore(this.learningType.getBaseScore()).url(this.learning.getUrl()).description(this.learning.getDescription()).subjectName(this.learningSubject.getName()).subjectType(this.learningSubject.getType().toString()).build();
+        this.learning = Learning.builder().title("Title 1").id(UUID.randomUUID()).type(this.learningType).url("www.TestUrl.com").description("Description").subject(this.learningSubject).build();
+        this.learningRequestDTO = LearningRequestDTO.builder().title(this.learning.getTitle()).type(this.learningType.getId()).url("www.TestUrl.com").description("Description").subject(this.learningSubject.getId()).build();
+        this.learningResponseDTO = LearningResponseDTO.builder().title(this.learning.getTitle()).id(this.learning.getId()).typeName(this.learningType.getName()).typeBaseScore(this.learningType.getBaseScore()).url(this.learning.getUrl()).description(this.learning.getDescription()).subjectName(this.learningSubject.getName()).subjectType(this.learningSubject.getType().toString()).build();
     }
 
     @Test

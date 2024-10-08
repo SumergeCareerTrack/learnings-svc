@@ -16,14 +16,18 @@ public class LearningResponseDTO {
     @lombok.NonNull
     private UUID id;
 
+    private String title;
+
     private String url;
 
     private String typeName;
+
     private int typeBaseScore;
 
     private String description;
 
     private String subjectType;
+
     private String subjectName;
 
     private float lengthInHours;
