@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-    // TODO we need to make returned STATUS CODES be clear CONFLICT & NOTFOUND
     @ExceptionHandler({ DoesNotExistException.class })
     public ResponseEntity<Object> handleDoesNotExistException(DoesNotExistException exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
