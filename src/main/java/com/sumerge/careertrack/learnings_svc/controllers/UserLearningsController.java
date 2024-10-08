@@ -1,5 +1,6 @@
 package com.sumerge.careertrack.learnings_svc.controllers;
 
+import com.sumerge.careertrack.learnings_svc.entities.requests.CustomUserLearningRequestDTO;
 import com.sumerge.careertrack.learnings_svc.entities.requests.UserLearningRequestDTO;
 import com.sumerge.careertrack.learnings_svc.entities.responses.UserLearningResponseDTO;
 import com.sumerge.careertrack.learnings_svc.services.UserLearningsService;
@@ -67,6 +68,9 @@ public class UserLearningsController {
         return ResponseEntity.ok(userLearningsService.rejectLearning(learningId));
     }
 
-    //TODO Add Learning if not exist****
+    @PostMapping("/custom-learning")
+    public ResponseEntity<UserLearningResponseDTO> addCustomLearning(@RequestBody CustomUserLearningRequestDTO customUserLearning) throws Exception {
+        return ResponseEntity.ok(userLearningsService.createCustomLearning(customUserLearning));
+    }
 
 }

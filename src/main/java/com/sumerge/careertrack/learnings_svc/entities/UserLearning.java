@@ -31,13 +31,12 @@ public class UserLearning {
     private Date date;
 
     @Column(nullable = false)
-    private ApprovalStatus approvalStatus;
+    @Builder.Default
+    private ApprovalStatus approvalStatus = ApprovalStatus.PENDING;
 
     //TODO dependencies of foreign keys
-//    @JoinColumn
-//    @ManyToOne
-//    private User user;
-//
+    private UUID userId;
+
     @JoinColumn
     @ManyToOne
     private Learning learning;
@@ -45,9 +44,5 @@ public class UserLearning {
     @JoinColumn
     @ManyToOne
     private Booster booster;
-
-    @JoinColumn
-    @ManyToOne
-    private ProofType proofType;
 
 }

@@ -2,10 +2,13 @@ package com.sumerge.careertrack.learnings_svc.services;
 
 import com.sumerge.careertrack.learnings_svc.entities.Booster;
 import com.sumerge.careertrack.learnings_svc.entities.Learning;
-import com.sumerge.careertrack.learnings_svc.entities.ProofType;
 import com.sumerge.careertrack.learnings_svc.entities.UserLearning;
 import com.sumerge.careertrack.learnings_svc.entities.enums.ApprovalStatus;
+import com.sumerge.careertrack.learnings_svc.entities.requests.CustomUserLearningRequestDTO;
+import com.sumerge.careertrack.learnings_svc.entities.requests.LearningRequestDTO;
+import com.sumerge.careertrack.learnings_svc.entities.responses.LearningResponseDTO;
 import com.sumerge.careertrack.learnings_svc.exceptions.DoesNotExistException;
+import com.sumerge.careertrack.learnings_svc.mappers.CustomUserLearningMapper;
 import com.sumerge.careertrack.learnings_svc.mappers.UserLearningMapper;
 import com.sumerge.careertrack.learnings_svc.entities.requests.UserLearningRequestDTO;
 import com.sumerge.careertrack.learnings_svc.entities.responses.UserLearningResponseDTO;
@@ -29,6 +32,8 @@ public class UserLearningsService {
     private final LearningRepository learningRepository;
     private final BoosterRepository boosterRepository;
     private final ProofTypesRepository proofTypesRepository;
+    private final CustomUserLearningMapper customUserLearningMapper;
+    private final LearningService learningService;
 
     public List<UserLearningResponseDTO> getAllUserLearnings() {
         List<UserLearning> userLearnings = userLearningsRepository.findAll();
@@ -72,18 +77,13 @@ public class UserLearningsService {
         //TODO user validation should be added here
 
         //case 3 boosterId doesn't exist
-        Booster booster = boosterRepository.findById(userLearningRequestDTO.getBoosterId())
-                .orElseThrow(()-> new DoesNotExistException(DoesNotExistException.BOOSTER , userLearningRequestDTO.getBoosterId()));
+        Booster booster = boosterRepository.findFirstByIsActiveTrue()
+                .orElse(null);
 
-        //case 4 ProofType doesn't exist
-        ProofType proofType = proofTypesRepository.findById(userLearningRequestDTO.getProofId())
-                .orElseThrow(() -> new DoesNotExistException(DoesNotExistException.PROOF_TYPE, userLearningRequestDTO.getProofId()));
-
-        userLearning.setApprovalStatus(userLearningRequestDTO.getApprovalStatus());
+        userLearning.setUserId(userLearningRequestDTO.getUserId());
         userLearning.setComment(userLearningRequestDTO.getComment());
         userLearning.setDate(userLearningRequestDTO.getDate());
         userLearning.setProof(userLearningRequestDTO.getProof());
-        userLearning.setProofType(proofType);
         userLearning.setLearning(learning);
         userLearning.setBooster(booster);
         return userLearningsRepository.save(userLearning);
@@ -117,6 +117,16 @@ public class UserLearningsService {
                 .orElseThrow(() -> new DoesNotExistException(DoesNotExistException.USER_LEARNING, learningId));
         userLearning.setApprovalStatus(ApprovalStatus.REJECTED);
         return userLearningMapper.toResponseDTO(userLearningsRepository.save(userLearning));
+    }
+
+    public UserLearningResponseDTO createCustomLearning(CustomUserLearningRequestDTO customUserLearning) throws Exception {
+        LearningRequestDTO learningRequestDTO = customUserLearningMapper.toLearningRequestDTO(customUserLearning);
+        UserLearningRequestDTO userLearningRequestDTO = customUserLearningMapper.toUserLearningRequestDTO(customUserLearning);
+
+        LearningResponseDTO learningResponse = learningService.create(learningRequestDTO);
+        userLearningRequestDTO.setLearningId(learningResponse.getId());
+
+        return createUserLearning(userLearningRequestDTO);
     }
 
 }

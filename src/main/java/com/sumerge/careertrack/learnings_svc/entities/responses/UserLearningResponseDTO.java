@@ -30,9 +30,8 @@ public class UserLearningResponseDTO {
 
     //TODO dependencies of foreign keys
 
-    //    private User user
+    private UUID userId;
     private Learning learning;
     private Booster booster;
 
-    private ProofType proofType;
 }

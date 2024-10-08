@@ -12,7 +12,7 @@ import com.sumerge.careertrack.learnings_svc.entities.Booster;
 public interface BoosterRepository extends JpaRepository<Booster, UUID> {
 
     boolean existsByName(String typeName);
-
+    Optional<Booster> findFirstByIsActiveTrue();
     Optional<Booster> findByName(String typeName);
 
 }

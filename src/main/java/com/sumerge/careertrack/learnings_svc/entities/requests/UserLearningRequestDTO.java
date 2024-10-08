@@ -1,10 +1,7 @@
 package com.sumerge.careertrack.learnings_svc.entities.requests;
 
 import com.sumerge.careertrack.learnings_svc.entities.enums.ApprovalStatus;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Date;
 import java.util.UUID;
@@ -21,14 +18,8 @@ public class UserLearningRequestDTO {
 
     private Date date;
 
-    private ApprovalStatus approvalStatus;
-
-//    private UUID userId;
+    @NonNull
+    private UUID userId;
 
     private UUID learningId;
-
-    private UUID boosterId;
-
-    private UUID proofId;
-
 }
