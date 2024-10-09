@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 @Service
 @RequiredArgsConstructor
@@ -74,7 +75,6 @@ public class LearningService {
         }
         LearningType learnType = learningTypeRepository.findByName(typeName);
         List<Learning> learnings = learningRep.findByType(learnType);
-        System.out.println(learnings);
         return learnings.stream().map(learningMapper::toLearningDTO).toList();
     }
 
@@ -91,25 +91,47 @@ public class LearningService {
     }
 
     public LearningResponseDTO updateLearning(UUID id, LearningRequestDTO learning) throws Exception {
-        Learning learningToUpdate = learningRep.findById(id).orElseThrow(
-                ()-> new DoesNotExistException(DoesNotExistException.LEARNING, id)
-        );
-        LearningType type = learningTypeRepository.findById(learning.getType()).orElseThrow(
-                ()-> new DoesNotExistException(DoesNotExistException.LEARNING_TYPE, learning.getType())
-        );
-        LearningSubject Subject = learningSubjectRepository.findById(learning.getSubject()).orElseThrow(
-                ()-> new DoesNotExistException(DoesNotExistException.LEARNING_SUBJECT, learning.getSubject())
-        );
-        learningToUpdate.setType(type);
-        learningToUpdate.setSubject(Subject);
-        learningToUpdate.setDescription(learning.getDescription());
-        learningToUpdate.setUrl(learning.getUrl());
-        learningToUpdate.setLengthInHours(learning.getLengthInHours());
-        LearningResponseDTO updatedLearning = learningMapper.toLearningDTO(learningToUpdate);
+        Learning learningToUpdate = learningRep.findById(id)
+                .orElseThrow(() -> new DoesNotExistException(DoesNotExistException.LEARNING, id));
+
+        if(learning.getType() != null){
+            updateIfPresent(learning.getType(),
+                    (typeId) -> learningToUpdate.setType(getLearningTypeById(typeId)));
+        }
+        if(learning.getSubject() != null)
+        {
+
+            updateIfPresent(learning.getSubject(),
+                    (subjectId) -> learningToUpdate.setSubject(getLearningSubjectById(subjectId)));
+        }
+
+
+        updateIfPresent(learning.getTitle(), learningToUpdate::setTitle);
+        updateIfPresent(learning.isPending(), learningToUpdate::setPending);
+        updateIfPresent(learning.getDescription(), learningToUpdate::setDescription);
+        updateIfPresent(learning.getUrl(), learningToUpdate::setUrl);
+        updateIfPresent(learning.getLengthInHours(), learningToUpdate::setLengthInHours);
+
+
         learningRep.save(learningToUpdate);
-        return updatedLearning;
+        return learningMapper.toLearningDTO(learningToUpdate);
+    }
 
 
+    private <T> void updateIfPresent(T value, Consumer<T> updater) {
+        if (value != null) {
+            updater.accept(value);
+        }
+    }
+
+    private LearningType getLearningTypeById(UUID typeId) throws DoesNotExistException {
+        return learningTypeRepository.findById(typeId)
+                .orElseThrow(() -> new DoesNotExistException(DoesNotExistException.LEARNING_TYPE, typeId));
+    }
+
+    private LearningSubject getLearningSubjectById(UUID subjectId) throws DoesNotExistException {
+        return learningSubjectRepository.findById(subjectId)
+                .orElseThrow(() -> new DoesNotExistException(DoesNotExistException.LEARNING_SUBJECT, subjectId));
     }
 
     public void deleteLearning(UUID id) {
