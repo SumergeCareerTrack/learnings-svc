@@ -1,7 +1,11 @@
 package com.sumerge.careertrack.learnings_svc.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sumerge.careertrack.learnings_svc.entities.LearningSubject;
+import com.sumerge.careertrack.learnings_svc.entities.LearningType;
 import com.sumerge.careertrack.learnings_svc.entities.enums.ApprovalStatus;
+import com.sumerge.careertrack.learnings_svc.entities.enums.SubjectType;
+import com.sumerge.careertrack.learnings_svc.entities.requests.CustomUserLearningRequestDTO;
 import com.sumerge.careertrack.learnings_svc.entities.requests.UserLearningRequestDTO;
 import com.sumerge.careertrack.learnings_svc.entities.responses.UserLearningResponseDTO;
 import com.sumerge.careertrack.learnings_svc.exceptions.DoesNotExistException;
@@ -17,6 +21,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.security.auth.Subject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -149,13 +154,16 @@ class UserLearningsControllerTest {
         UserLearningResponseDTO userLearningResponseDTO = new UserLearningResponseDTO();
         UUID uuid = UUID.randomUUID();
         userLearningResponseDTO.setId(uuid);
+        UserLearningRequestDTO userLearningRequestDTO = new UserLearningRequestDTO();
+        userLearningRequestDTO.setLearningId(uuid);
+        userLearningRequestDTO.setUserId(uuid);
 
         when(userLearningsService.createUserLearning(any(UserLearningRequestDTO.class)))
                 .thenReturn(userLearningResponseDTO);
 
         mockMvc.perform(post("/users-learnings")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(userLearningResponseDTO)))
+                .content(objectMapper.writeValueAsString(userLearningRequestDTO)))
                 .andExpect(status().isOk());
 
         verify(userLearningsService, times(1)).createUserLearning(any(UserLearningRequestDTO.class));
@@ -169,12 +177,13 @@ class UserLearningsControllerTest {
         UUID uuid = UUID.randomUUID();
         userLearningResponseDTO.setId(uuid);
         UserLearningRequestDTO userLearningRequestDTO = new UserLearningRequestDTO();
-
+        userLearningRequestDTO.setUserId(uuid);
+        userLearningRequestDTO.setLearningId(uuid);
         when(userLearningsService.updateUserLearning(uuid, userLearningRequestDTO))
         .thenReturn(userLearningResponseDTO);
         mockMvc.perform(put("/users-learnings/{learningId}",uuid)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(userLearningResponseDTO)))
+                .content(objectMapper.writeValueAsString(userLearningRequestDTO)))
                 .andExpect(status().isOk());
 
         verify(userLearningsService , times(1)).updateUserLearning(uuid, userLearningRequestDTO);
@@ -183,7 +192,7 @@ class UserLearningsControllerTest {
     void updateUserLearning_Not_Successful() throws Exception {
         UUID uuid = UUID.randomUUID();
         UserLearningRequestDTO userLearningRequestDTO = new UserLearningRequestDTO();
-
+        userLearningRequestDTO.setUserId(uuid);
         when(userLearningsService.updateUserLearning(uuid, userLearningRequestDTO))
                 .thenThrow(DoesNotExistException.class);
 
@@ -284,5 +293,42 @@ class UserLearningsControllerTest {
 
     }
 
+    @Test
+    void addCustomLearning() throws Exception{
+        UUID uuid = UUID.randomUUID();
+        CustomUserLearningRequestDTO customUserLearningRequestDTO = new CustomUserLearningRequestDTO();
+        customUserLearningRequestDTO.setUserId(uuid);
+        customUserLearningRequestDTO.setType(uuid);
+        customUserLearningRequestDTO.setSubject(uuid);
+
+        when(userLearningsService.createCustomLearning(customUserLearningRequestDTO))
+                .thenReturn(any(UserLearningResponseDTO.class));
+
+        mockMvc.perform(post("/users-learnings/custom-learning")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(customUserLearningRequestDTO)))
+                .andExpect(status().isOk());
+
+        verify(userLearningsService , times(1)).createCustomLearning(customUserLearningRequestDTO);
+    }
+
+    @Test
+    void addCustomLearning_Not_Successful() throws Exception{
+        UUID uuid = UUID.randomUUID();
+        CustomUserLearningRequestDTO customUserLearningRequestDTO = new CustomUserLearningRequestDTO();
+        customUserLearningRequestDTO.setUserId(uuid);
+        customUserLearningRequestDTO.setType(uuid);
+        customUserLearningRequestDTO.setSubject(uuid);
+
+        when(userLearningsService.createCustomLearning(customUserLearningRequestDTO))
+                .thenThrow(DoesNotExistException.class);
+
+        mockMvc.perform(post("/users-learnings/custom-learning")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(customUserLearningRequestDTO)))
+                .andExpect(status().isNotFound());
+
+        verify(userLearningsService , times(1)).createCustomLearning(customUserLearningRequestDTO);
+    }
 
 }
