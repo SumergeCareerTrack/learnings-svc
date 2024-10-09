@@ -1,12 +1,12 @@
 package com.sumerge.careertrack.learnings_svc.repositories;
 
-import com.sumerge.careertrack.learnings_svc.entities.LearningType;
-import jakarta.persistence.metamodel.IdentifiableType;
+import java.util.UUID;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.UUID;
+import com.sumerge.careertrack.learnings_svc.entities.LearningType;
+
 @Repository
 public interface LearningTypeRepository extends JpaRepository<LearningType, UUID> {
 

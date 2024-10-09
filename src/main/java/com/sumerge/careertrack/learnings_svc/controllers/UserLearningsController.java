@@ -57,7 +57,7 @@ public class UserLearningsController {
        return ResponseEntity.ok(userLearningsService.deleteUserLearning(learningId));
     }
 
-    //TODO Should we add an auth token ?
+    // TODO Should we add an auth token ?
     @PutMapping("/approve/{learningId}")
     public ResponseEntity<UserLearningResponseDTO> approveUserLearning(@PathVariable UUID learningId) {
         return ResponseEntity.ok(userLearningsService.approveLearning(learningId));

@@ -1,22 +1,21 @@
 package com.sumerge.careertrack.learnings_svc.services;
 
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.stereotype.Service;
+
 import com.sumerge.careertrack.learnings_svc.entities.Learning;
 import com.sumerge.careertrack.learnings_svc.entities.LearningType;
 import com.sumerge.careertrack.learnings_svc.entities.requests.LearningTypeRequestDTO;
 import com.sumerge.careertrack.learnings_svc.entities.responses.LearningTypeResponseDTO;
 import com.sumerge.careertrack.learnings_svc.exceptions.AlreadyExistsException;
 import com.sumerge.careertrack.learnings_svc.exceptions.DoesNotExistException;
-import com.sumerge.careertrack.learnings_svc.mappers.LearningMapper;
-import com.sumerge.careertrack.learnings_svc.mappers.LearningSubjectMapper;
 import com.sumerge.careertrack.learnings_svc.mappers.LearningTypeMapper;
 import com.sumerge.careertrack.learnings_svc.repositories.LearningRepository;
-import com.sumerge.careertrack.learnings_svc.repositories.LearningSubjectRepository;
 import com.sumerge.careertrack.learnings_svc.repositories.LearningTypeRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.UUID;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +26,7 @@ public class LearningTypeService {
 
     public LearningTypeResponseDTO createType(LearningTypeRequestDTO learning) throws Exception {
         boolean exists = learningTypeRepository.existsByName(learning.getName());
-        if(exists){
+        if (exists) {
             throw new AlreadyExistsException(AlreadyExistsException.LEARNING_TYPE, learning.getName());
         }
         LearningType newLearning = learningTypeMapper.toLearningType(learning);
@@ -41,7 +40,7 @@ public class LearningTypeService {
     }
 
     public LearningTypeResponseDTO getById(UUID typeId) throws Exception {
-        if(!learningTypeRepository.existsById(typeId)){
+        if (!learningTypeRepository.existsById(typeId)) {
             throw new DoesNotExistException(DoesNotExistException.LEARNING_TYPE, typeId);
         }
         LearningType type = learningTypeRepository.findById(typeId).get();
@@ -49,8 +48,8 @@ public class LearningTypeService {
 
     }
 
-    public LearningTypeResponseDTO updateType(UUID id,LearningTypeRequestDTO learningType) throws Exception {
-        if(!learningTypeRepository.existsById(id)){
+    public LearningTypeResponseDTO updateType(UUID id, LearningTypeRequestDTO learningType) throws Exception {
+        if (!learningTypeRepository.existsById(id)) {
             throw new DoesNotExistException(DoesNotExistException.LEARNING_TYPE, id);
         }
         LearningType type = learningTypeRepository.findById(id).get();
@@ -61,15 +60,15 @@ public class LearningTypeService {
     }
 
     public void deleteType(UUID id) throws Exception {
-        if(!learningTypeRepository.existsById(id)){
+        if (!learningTypeRepository.existsById(id)) {
             throw new DoesNotExistException(DoesNotExistException.LEARNING_TYPE, id);
         }
         LearningType type = learningTypeRepository.findById(id).get();
         List<Learning> learnings = learningRep.findByType(type);
-        if(!learnings.isEmpty()){
-            throw new AlreadyExistsException(AlreadyExistsException.LEARNING_HAS_TYPE,learnings.size(),type.getName());
-        }
-        else{
+        if (!learnings.isEmpty()) {
+            throw new AlreadyExistsException(AlreadyExistsException.LEARNING_HAS_TYPE, learnings.size(),
+                    type.getName());
+        } else {
             learningTypeRepository.delete(type);
         }
     }
