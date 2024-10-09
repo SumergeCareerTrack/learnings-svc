@@ -48,6 +48,21 @@ public class LearningController {
     }
 
     @Tag(name = "Get Learnings")
+    @GetMapping("/pending")
+    public ResponseEntity<List<LearningResponseDTO>> getAllPendingLearnings() {
+        List<LearningResponseDTO> learnings = learningService.getAllPending();
+        return ResponseEntity.ok(learnings);
+    }
+
+    @Tag(name = "Get Learnings")
+    @GetMapping("/approved")
+    public ResponseEntity<List<LearningResponseDTO>> getAllNonPendingLearnings() {
+        List<LearningResponseDTO> learnings = learningService.getAllNonPending();
+        return ResponseEntity.ok(learnings);
+    }
+
+
+    @Tag(name = "Get Learnings")
     @GetMapping("/{id}")
     public ResponseEntity<LearningResponseDTO> getLearningById(
             @PathVariable UUID id) throws Exception {

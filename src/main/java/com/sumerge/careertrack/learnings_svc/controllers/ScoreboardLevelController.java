@@ -27,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ScoreboardLevelController {
 
-    private ScoreboardService scoreboardService;
+    private final ScoreboardService scoreboardService;
 
     @GetMapping("/")
     public List<ScoreboardLevel> getAll() {

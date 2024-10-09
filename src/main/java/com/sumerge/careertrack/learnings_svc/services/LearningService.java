@@ -45,13 +45,13 @@ public class LearningService {
 
         newLearning.setUrl(learning.getUrl());
         newLearning.setDescription(learning.getDescription());
+        newLearning.setPending(learning.isPending());
         learningRep.save(newLearning);
-
 
         return learningMapper.toLearningDTO(newLearning);
     }
 
-
+    
 
 
     public List<LearningResponseDTO> getAll() {
@@ -117,5 +117,15 @@ public class LearningService {
             throw new DoesNotExistException(DoesNotExistException.LEARNING, id);
         }
         learningRep.deleteById(id);
+    }
+
+    public List<LearningResponseDTO> getAllPending() {
+        List<Learning> learnings = learningRep.findByPending(true);
+        return  learnings.stream().map(learningMapper::toLearningDTO).toList();
+    }
+
+    public List<LearningResponseDTO> getAllNonPending() {
+        List<Learning> learnings = learningRep.findByPending(false);
+        return  learnings.stream().map(learningMapper::toLearningDTO).toList();
     }
 }
