@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class BoosterService {
-    private BoosterTypeRepository typeRepository;
+    private final BoosterTypeRepository typeRepository;
 
     private BoosterMapper boosterMapper;
     private BoosterRepository boosterRepository;

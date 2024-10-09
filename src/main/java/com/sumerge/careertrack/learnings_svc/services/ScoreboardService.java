@@ -18,8 +18,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ScoreboardService {
 
-    private ScoreboardLevelRepository repository;
-    private ScoreboardLevelMapper mapper;
+    private final ScoreboardLevelRepository repository;
+    private final ScoreboardLevelMapper mapper;
 
     public List<ScoreboardLevel> getAll() {
         return repository.findAll();

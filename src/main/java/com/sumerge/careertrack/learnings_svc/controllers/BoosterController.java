@@ -28,7 +28,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class BoosterController {
 
-    private BoosterService service;
+    private final BoosterService service;
 
     @GetMapping
     public ResponseEntity<List<BoosterResponseDTO>> getAll() {

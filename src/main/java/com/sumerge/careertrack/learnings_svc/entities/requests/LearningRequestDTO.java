@@ -27,4 +27,6 @@ public class LearningRequestDTO {
 
     private float lengthInHours;
 
+    private boolean pending;
+
 }

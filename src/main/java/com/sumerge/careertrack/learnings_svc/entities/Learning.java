@@ -35,4 +35,6 @@ public class Learning {
 
     private float lengthInHours;
 
+    private boolean pending;
+
 }
