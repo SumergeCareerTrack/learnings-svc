@@ -18,16 +18,16 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserScoreRepository {
     public static final String LEADERBOARD_KEY = "LEADERBOARD";
-    private final RedisTemplate<Object, Object> redisTemplate;
+    private final RedisTemplate<Object, Object> userScoresTemplate;
 
     public List<Object> getTopPlayers(int topN) {
-        Set<Object> topPlayersSet = redisTemplate.opsForZSet()
+        Set<Object> topPlayersSet = userScoresTemplate.opsForZSet()
                 .reverseRange(LEADERBOARD_KEY, 0, topN - 1);
         return topPlayersSet.stream().collect(Collectors.toList());
     }
 
     public UserScore findById(UUID playerId) {
-        Double score = redisTemplate.opsForZSet().score(LEADERBOARD_KEY, playerId.toString());
+        Double score = userScoresTemplate.opsForZSet().score(LEADERBOARD_KEY, playerId.toString());
 
         if (score == null) {
             return UserScore.builder()
@@ -43,12 +43,12 @@ public class UserScoreRepository {
     }
 
     public boolean existsById(UUID playerId) {
-        Double score = redisTemplate.opsForZSet().score(LEADERBOARD_KEY, playerId.toString());
+        Double score = userScoresTemplate.opsForZSet().score(LEADERBOARD_KEY, playerId.toString());
         return score != null;
     }
 
     public List<UserScore> findAll() {
-        Set<TypedTuple<Object>> scoresSet = redisTemplate.opsForZSet()
+        Set<TypedTuple<Object>> scoresSet = userScoresTemplate.opsForZSet()
                 .unionWithScores(LEADERBOARD_KEY, Collections.emptyList());
 
         return scoresSet.stream()
@@ -59,14 +59,14 @@ public class UserScoreRepository {
     }
 
     public void save(UUID playerId, int score) {
-        redisTemplate.opsForZSet().addIfAbsent(LEADERBOARD_KEY, playerId.toString(), score);
+        userScoresTemplate.opsForZSet().addIfAbsent(LEADERBOARD_KEY, playerId.toString(), score);
     }
 
     public void addToUserScore(UUID playerId, int delta) {
-        redisTemplate.opsForZSet().incrementScore(LEADERBOARD_KEY, playerId.toString(), delta);
+        userScoresTemplate.opsForZSet().incrementScore(LEADERBOARD_KEY, playerId.toString(), delta);
     }
 
     public void removeScore(UUID playerId) {
-        redisTemplate.opsForZSet().remove(LEADERBOARD_KEY, playerId.toString());
+        userScoresTemplate.opsForZSet().remove(LEADERBOARD_KEY, playerId.toString());
     }
 }

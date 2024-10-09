@@ -7,17 +7,26 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
 @Configuration
-@EnableRedisHttpSession
-public class ScoresCacheRedisConfig {
+public class RedisConfig {
 
-    @Value("${spring.data.redis.usercache.host}")
+    @Value("${spring.data.redis.host}")
     private String userScoresCacheHost;
 
-    @Value("${spring.data.redis.usercache.port}")
+    @Value("${spring.data.redis.port}")
     private int userScoresCachePort;
+
+    @Bean
+    public LettuceConnectionFactory userTokensConnectionFactory() {
+        RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration();
+
+        redisConfig.setHostName(userScoresCacheHost);
+        redisConfig.setPort(userScoresCachePort);
+        redisConfig.setDatabase(0);
+
+        return new LettuceConnectionFactory(redisConfig);
+    }
 
     @Bean
     public LettuceConnectionFactory userScoresCacheConnectionFactory() {
@@ -25,12 +34,27 @@ public class ScoresCacheRedisConfig {
 
         redisConfig.setHostName(userScoresCacheHost);
         redisConfig.setPort(userScoresCachePort);
+        redisConfig.setDatabase(1);
 
         return new LettuceConnectionFactory(redisConfig);
     }
 
     @Bean
-    public RedisTemplate<Object, Object> redisTemplate(
+    public RedisTemplate<String, String> userTokensTemplate(
+            LettuceConnectionFactory userTokensConnectionFactory) {
+        RedisTemplate<String, String> template = new RedisTemplate<>();
+        template.setConnectionFactory(userTokensConnectionFactory);
+
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(new StringRedisSerializer());
+        template.setHashKeySerializer(new StringRedisSerializer());
+        template.setHashValueSerializer(new StringRedisSerializer());
+
+        return template;
+    }
+
+    @Bean
+    public RedisTemplate<Object, Object> userScoresTemplate(
             LettuceConnectionFactory userScoresCacheConnectionFactory) {
         RedisTemplate<Object, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(userScoresCacheConnectionFactory);
@@ -40,4 +64,5 @@ public class ScoresCacheRedisConfig {
 
         return template;
     }
+
 }
