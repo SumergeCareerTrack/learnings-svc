@@ -59,14 +59,14 @@ public class UserScoreRepository {
     }
 
     public void save(UUID playerId, int score) {
-        redisTemplate.opsForZSet().addIfAbsent(LEADERBOARD_KEY, playerId, score);
+        redisTemplate.opsForZSet().addIfAbsent(LEADERBOARD_KEY, playerId.toString(), score);
     }
 
     public void addToUserScore(UUID playerId, int delta) {
-        redisTemplate.opsForZSet().incrementScore(LEADERBOARD_KEY, playerId, delta);
+        redisTemplate.opsForZSet().incrementScore(LEADERBOARD_KEY, playerId.toString(), delta);
     }
 
     public void removeScore(UUID playerId) {
-        redisTemplate.opsForZSet().remove(LEADERBOARD_KEY, playerId);
+        redisTemplate.opsForZSet().remove(LEADERBOARD_KEY, playerId.toString());
     }
 }
