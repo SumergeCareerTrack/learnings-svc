@@ -15,8 +15,8 @@ public class UserTokenRepository {
     private final RedisTemplate<String, String> userTokensTemplate;
 
     public boolean existsById(UUID userId) {
-        Object userToken = userTokensTemplate.opsForHash().get(hashKey, userId.toString());
-        return userToken != null;
+        String fullKey = hashKey + ":" + userId.toString();
+        return userTokensTemplate.hasKey(fullKey);
     }
 
 }
