@@ -18,7 +18,7 @@ public interface LearningMapper {
     @Mapping(target = "url", source = "url")
     @Mapping(target = "description", source = "description")
     @Mapping(target = "lengthInHours", source = "lengthInHours")
-    @Mapping(target = "pending", source = "pending")
+    @Mapping(target = "approved", source = "approved")
     Learning toLearning(LearningRequestDTO learningDTO);
 
     @Mapping(target = "id", source = "id")
@@ -29,7 +29,7 @@ public interface LearningMapper {
     @Mapping(target = "subjectName", source = "learning.subject.name")
     @Mapping(target = "subjectType", expression = "java(map(learning.getSubject()))")
     @Mapping(target = "lengthInHours", source = "lengthInHours")
-    @Mapping(target = "pending", source = "pending")
+    @Mapping(target = "approved", source = "approved")
 
     LearningResponseDTO toLearningDTO(Learning learning);
 

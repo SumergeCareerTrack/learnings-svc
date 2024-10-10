@@ -35,6 +35,7 @@ public class CustomUserLearningRequestDTO {
 
     private Date date;
 
+    private Boolean approved;
     @lombok.NonNull
     private UUID userId;
 

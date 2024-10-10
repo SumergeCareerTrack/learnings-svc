@@ -31,5 +31,5 @@ public class LearningResponseDTO {
 
     private float lengthInHours;
 
-    private boolean pending;
+    private boolean approved;
 }

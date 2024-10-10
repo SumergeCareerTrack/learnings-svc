@@ -105,6 +105,7 @@ public class UserLearningsService {
     }
 
     //TODO add already approved exception
+    //TODO update flag to false in the learning object and approve this user learning..
     public UserLearningResponseDTO approveLearning(UUID learningId){
         UserLearning userLearning = userLearningsRepository.findById(learningId)
                 .orElseThrow(() -> new DoesNotExistException(DoesNotExistException.USER_LEARNING, learningId));
@@ -112,6 +113,7 @@ public class UserLearningsService {
         return userLearningMapper.toResponseDTO(userLearningsRepository.save(userLearning));
     }
 
+    //TODO delete the learning and point to a static learning for all the rejected ones
     public UserLearningResponseDTO rejectLearning(UUID learningId){
         UserLearning userLearning = userLearningsRepository.findById(learningId)
                 .orElseThrow(() -> new DoesNotExistException(DoesNotExistException.USER_LEARNING, learningId));
