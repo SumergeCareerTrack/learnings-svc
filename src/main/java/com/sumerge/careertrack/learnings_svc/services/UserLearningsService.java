@@ -7,6 +7,7 @@ import com.sumerge.careertrack.learnings_svc.entities.enums.ApprovalStatus;
 import com.sumerge.careertrack.learnings_svc.entities.requests.CustomUserLearningRequestDTO;
 import com.sumerge.careertrack.learnings_svc.entities.requests.LearningRequestDTO;
 import com.sumerge.careertrack.learnings_svc.entities.responses.LearningResponseDTO;
+import com.sumerge.careertrack.learnings_svc.exceptions.AlreadyExistsException;
 import com.sumerge.careertrack.learnings_svc.exceptions.DoesNotExistException;
 import com.sumerge.careertrack.learnings_svc.mappers.CustomUserLearningMapper;
 import com.sumerge.careertrack.learnings_svc.mappers.UserLearningMapper;
@@ -20,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -46,10 +48,9 @@ public class UserLearningsService {
         return userLearningMapper.toResponseDTO(userLearning);
     }
 
-    //TODO UserNeeded & its
     public List<UserLearningResponseDTO> getUserLearningsByUserId(UUID userId) {
-        //TODO find by user ID when user added
-        List<UserLearning> userLearnings= userLearningsRepository.findAllById(userId);
+        //TODO validate userId already exist
+        List<UserLearning> userLearnings= userLearningsRepository.findAllByUserId(userId);
         return userLearnings.stream().map(userLearningMapper::toResponseDTO).collect(Collectors.toList());
     }
 
@@ -104,27 +105,33 @@ public class UserLearningsService {
         return "User Learning deleted";
     }
 
-    //TODO add already approved exception
-    //TODO update flag to false in the learning object and approve this user learning..
-    public UserLearningResponseDTO approveLearning(UUID learningId){
+    public UserLearningResponseDTO approveLearning(UUID learningId , String comment){
+
         UserLearning userLearning = userLearningsRepository.findById(learningId)
                 .orElseThrow(() -> new DoesNotExistException(DoesNotExistException.USER_LEARNING, learningId));
+        Learning learning = learningRepository.findById(userLearning.getLearning().getId())
+                .orElseThrow(() -> new DoesNotExistException(DoesNotExistException.LEARNING, userLearning.getLearning().getId()));
+
+        learning.setApproved(true);
         userLearning.setApprovalStatus(ApprovalStatus.APPROVED);
+        userLearning.setComment(comment);
+        learningRepository.save(learning);
         return userLearningMapper.toResponseDTO(userLearningsRepository.save(userLearning));
     }
 
-    //TODO delete the learning and point to a static learning for all the rejected ones
-    public UserLearningResponseDTO rejectLearning(UUID learningId){
+    public UserLearningResponseDTO rejectLearning(UUID learningId , String comment){
         UserLearning userLearning = userLearningsRepository.findById(learningId)
                 .orElseThrow(() -> new DoesNotExistException(DoesNotExistException.USER_LEARNING, learningId));
+
         userLearning.setApprovalStatus(ApprovalStatus.REJECTED);
+        userLearning.setComment(comment);
         return userLearningMapper.toResponseDTO(userLearningsRepository.save(userLearning));
     }
 
     public UserLearningResponseDTO createCustomLearning(CustomUserLearningRequestDTO customUserLearning) throws Exception {
         LearningRequestDTO learningRequestDTO = customUserLearningMapper.toLearningRequestDTO(customUserLearning);
         UserLearningRequestDTO userLearningRequestDTO = customUserLearningMapper.toUserLearningRequestDTO(customUserLearning);
-
+        learningRequestDTO.setApproved(false);
         LearningResponseDTO learningResponse = learningService.create(learningRequestDTO);
         userLearningRequestDTO.setLearningId(learningResponse.getId());
 

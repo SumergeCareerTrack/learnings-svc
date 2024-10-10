@@ -59,13 +59,13 @@ public class UserLearningsController {
 
     // TODO Should we add an auth token ?
     @PutMapping("/approve/{learningId}")
-    public ResponseEntity<UserLearningResponseDTO> approveUserLearning(@PathVariable UUID learningId) {
-        return ResponseEntity.ok(userLearningsService.approveLearning(learningId));
+    public ResponseEntity<UserLearningResponseDTO> approveUserLearning(@PathVariable UUID learningId , @RequestBody String comment) {
+        return ResponseEntity.ok(userLearningsService.approveLearning(learningId , comment));
     }
 
     @PutMapping("/reject/{learningId}")
-    public ResponseEntity<UserLearningResponseDTO> rejectUserLearning(@PathVariable UUID learningId) {
-        return ResponseEntity.ok(userLearningsService.rejectLearning(learningId));
+    public ResponseEntity<UserLearningResponseDTO> rejectUserLearning(@PathVariable UUID learningId , @RequestBody String comment) {
+        return ResponseEntity.ok(userLearningsService.rejectLearning(learningId , comment));
     }
 
     @PostMapping("/custom-learning")

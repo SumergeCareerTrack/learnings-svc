@@ -9,6 +9,7 @@ import java.util.UUID;
 
 @Repository
 public interface UserLearningsRepository extends JpaRepository<UserLearning, UUID> {
-    List<UserLearning> findAllById(UUID userId);
-    List<UserLearning> findAllByLearning_Id(UUID userId);
+    List<UserLearning> findAllById(UUID userLearningId);
+    List<UserLearning> findAllByLearning_Id(UUID learningId);
+    List<UserLearning> findAllByUserId(UUID userId);
 }
