@@ -53,8 +53,12 @@ public class LearningTypeService {
             throw new DoesNotExistException(DoesNotExistException.LEARNING_TYPE, id);
         }
         LearningType type = learningTypeRepository.findById(id).get();
+        if(!learningType.getName().isEmpty()){
         type.setName(learningType.getName());
-        type.setBaseScore(learningType.getBaseScore());
+        }
+        if(learningType.getBaseScore()!=0){
+            type.setBaseScore(learningType.getBaseScore());
+        }
         LearningType savedLearning = learningTypeRepository.save(type);
         return learningTypeMapper.toLearningTypeDTO(savedLearning);
     }
