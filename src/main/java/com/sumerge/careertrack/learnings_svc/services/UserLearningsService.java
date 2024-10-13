@@ -3,9 +3,12 @@ package com.sumerge.careertrack.learnings_svc.services;
 import com.sumerge.careertrack.learnings_svc.entities.Booster;
 import com.sumerge.careertrack.learnings_svc.entities.Learning;
 import com.sumerge.careertrack.learnings_svc.entities.UserLearning;
+import com.sumerge.careertrack.learnings_svc.entities.enums.ActionEnum;
 import com.sumerge.careertrack.learnings_svc.entities.enums.ApprovalStatus;
+import com.sumerge.careertrack.learnings_svc.entities.enums.EntityTypeEnum;
 import com.sumerge.careertrack.learnings_svc.entities.requests.CustomUserLearningRequestDTO;
 import com.sumerge.careertrack.learnings_svc.entities.requests.LearningRequestDTO;
+import com.sumerge.careertrack.learnings_svc.entities.requests.NotificationRequestDTO;
 import com.sumerge.careertrack.learnings_svc.entities.responses.LearningResponseDTO;
 import com.sumerge.careertrack.learnings_svc.exceptions.DoesNotExistException;
 import com.sumerge.careertrack.learnings_svc.mappers.CustomUserLearningMapper;
@@ -15,6 +18,7 @@ import com.sumerge.careertrack.learnings_svc.entities.responses.UserLearningResp
 import com.sumerge.careertrack.learnings_svc.repositories.BoosterRepository;
 import com.sumerge.careertrack.learnings_svc.repositories.LearningRepository;
 import com.sumerge.careertrack.learnings_svc.repositories.ProofTypesRepository;
+import com.sumerge.careertrack.learnings_svc.entities.enums.ActionEnum;
 import com.sumerge.careertrack.learnings_svc.repositories.UserLearningsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,6 +38,7 @@ public class UserLearningsService {
     private final ProofTypesRepository proofTypesRepository;
     private final CustomUserLearningMapper customUserLearningMapper;
     private final LearningService learningService;
+    private final ProducerService producerService;
 
     public List<UserLearningResponseDTO> getAllUserLearnings() {
         List<UserLearning> userLearnings = userLearningsRepository.findAll();
@@ -109,6 +114,17 @@ public class UserLearningsService {
         UserLearning userLearning = userLearningsRepository.findById(learningId)
                 .orElseThrow(() -> new DoesNotExistException(DoesNotExistException.USER_LEARNING, learningId));
         userLearning.setApprovalStatus(ApprovalStatus.APPROVED);
+        //TODO NEED TO GET MANAGER ID ??
+        NotificationRequestDTO notification= NotificationRequestDTO.builder()
+                .seen(false)
+                .date(userLearning.getDate())
+                .actorId(userLearning.getUserId())
+                .entityId(userLearning.getId())
+                .actionName(ActionEnum.APPROVAL)
+                .entityTypeName(EntityTypeEnum.LEARNING)
+                .receiverID(List.of())
+                .build();
+        producerService.sendMessage(notification);
         return userLearningMapper.toResponseDTO(userLearningsRepository.save(userLearning));
     }
 
@@ -116,6 +132,17 @@ public class UserLearningsService {
         UserLearning userLearning = userLearningsRepository.findById(learningId)
                 .orElseThrow(() -> new DoesNotExistException(DoesNotExistException.USER_LEARNING, learningId));
         userLearning.setApprovalStatus(ApprovalStatus.REJECTED);
+        //TODO NEED TO GET MANAGER ID ??
+        NotificationRequestDTO notification= NotificationRequestDTO.builder()
+                .seen(false)
+                .date(userLearning.getDate())
+                .actorId(userLearning.getUserId())
+                .entityId(userLearning.getId())
+                .actionName(ActionEnum.REJECTION)
+                .entityTypeName(EntityTypeEnum.LEARNING)
+                .receiverID(List.of())
+                .build();
+        producerService.sendMessage(notification);
         return userLearningMapper.toResponseDTO(userLearningsRepository.save(userLearning));
     }
 
@@ -125,7 +152,17 @@ public class UserLearningsService {
 
         LearningResponseDTO learningResponse = learningService.create(learningRequestDTO);
         userLearningRequestDTO.setLearningId(learningResponse.getId());
-
+        //TODO NEED TO GET MANAGER ID ??
+        NotificationRequestDTO notification= NotificationRequestDTO.builder()
+                .seen(false)
+                .date(userLearningRequestDTO.getDate())
+                .actorId(userLearningRequestDTO.getUserId())
+                .entityId(userLearningRequestDTO.getLearningId())
+                .actionName(ActionEnum.SUBMISSION)
+                .entityTypeName(EntityTypeEnum.LEARNING)
+                .receiverID(List.of())
+                .build();
+        producerService.sendMessage(notification);
         return createUserLearning(userLearningRequestDTO);
     }
 

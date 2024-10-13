@@ -19,9 +19,9 @@ public class ProducerController {
     private ProducerService producerService;
 
     @PostMapping("/send")
-    public void sendMessage(@RequestBody String message) throws JsonProcessingException {
-        producerService.sendMessage(message);
-        System.out.println("SENT: " + message);
+    public void sendMessage(@RequestBody NotificationRequestDTO dto) throws JsonProcessingException {
+        producerService.sendMessage(dto);
+        System.out.println("SENT: " + dto);
     }
 
 }
