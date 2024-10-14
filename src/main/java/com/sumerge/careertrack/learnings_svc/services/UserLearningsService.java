@@ -18,17 +18,17 @@ import com.sumerge.careertrack.learnings_svc.entities.responses.UserLearningResp
 import com.sumerge.careertrack.learnings_svc.repositories.BoosterRepository;
 import com.sumerge.careertrack.learnings_svc.repositories.LearningRepository;
 import com.sumerge.careertrack.learnings_svc.repositories.ProofTypesRepository;
-import com.sumerge.careertrack.learnings_svc.entities.enums.ActionEnum;
 import com.sumerge.careertrack.learnings_svc.repositories.UserLearningsRepository;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor()
+@AllArgsConstructor
 public class UserLearningsService {
 
     private final UserLearningsRepository userLearningsRepository;
@@ -110,48 +110,57 @@ public class UserLearningsService {
     }
 
     //TODO add already approved exception
-    public UserLearningResponseDTO approveLearning(UUID learningId){
+    public UserLearningResponseDTO approveLearning(UUID learningId,String id){
+        UUID managerId = UUID.fromString(id);
         UserLearning userLearning = userLearningsRepository.findById(learningId)
                 .orElseThrow(() -> new DoesNotExistException(DoesNotExistException.USER_LEARNING, learningId));
         userLearning.setApprovalStatus(ApprovalStatus.APPROVED);
+        List<UUID> receiverId = new ArrayList<UUID>();
+        receiverId.add(userLearning.getUserId());
         //TODO NEED TO GET MANAGER ID ??
         NotificationRequestDTO notification= NotificationRequestDTO.builder()
                 .seen(false)
                 .date(userLearning.getDate())
-                .actorId(userLearning.getUserId())
+                .actorId(managerId)
                 .entityId(userLearning.getId())
                 .actionName(ActionEnum.APPROVAL)
                 .entityTypeName(EntityTypeEnum.LEARNING)
-                .receiverID(List.of())
+                .receiverID(receiverId)
                 .build();
         producerService.sendMessage(notification);
         return userLearningMapper.toResponseDTO(userLearningsRepository.save(userLearning));
     }
 
-    public UserLearningResponseDTO rejectLearning(UUID learningId){
+    public UserLearningResponseDTO rejectLearning(UUID learningId,String id){
+        UUID managerId = UUID.fromString(id);
         UserLearning userLearning = userLearningsRepository.findById(learningId)
                 .orElseThrow(() -> new DoesNotExistException(DoesNotExistException.USER_LEARNING, learningId));
         userLearning.setApprovalStatus(ApprovalStatus.REJECTED);
         //TODO NEED TO GET MANAGER ID ??
+        List<UUID> receiverId = new ArrayList<UUID>();
+        receiverId.add(userLearning.getUserId());
         NotificationRequestDTO notification= NotificationRequestDTO.builder()
                 .seen(false)
                 .date(userLearning.getDate())
-                .actorId(userLearning.getUserId())
+                .actorId(managerId)
                 .entityId(userLearning.getId())
                 .actionName(ActionEnum.REJECTION)
                 .entityTypeName(EntityTypeEnum.LEARNING)
-                .receiverID(List.of())
+                .receiverID(receiverId)
                 .build();
         producerService.sendMessage(notification);
         return userLearningMapper.toResponseDTO(userLearningsRepository.save(userLearning));
     }
 
-    public UserLearningResponseDTO createCustomLearning(CustomUserLearningRequestDTO customUserLearning) throws Exception {
+    public UserLearningResponseDTO createCustomLearning(CustomUserLearningRequestDTO customUserLearning,String id) throws Exception {
+        UUID managerId = UUID.fromString(id);
         LearningRequestDTO learningRequestDTO = customUserLearningMapper.toLearningRequestDTO(customUserLearning);
         UserLearningRequestDTO userLearningRequestDTO = customUserLearningMapper.toUserLearningRequestDTO(customUserLearning);
 
         LearningResponseDTO learningResponse = learningService.create(learningRequestDTO);
         userLearningRequestDTO.setLearningId(learningResponse.getId());
+        List<UUID> receiverId = new ArrayList<UUID>();
+        receiverId.add(UUID.fromString(id));
         //TODO NEED TO GET MANAGER ID ??
         NotificationRequestDTO notification= NotificationRequestDTO.builder()
                 .seen(false)
@@ -160,7 +169,7 @@ public class UserLearningsService {
                 .entityId(userLearningRequestDTO.getLearningId())
                 .actionName(ActionEnum.SUBMISSION)
                 .entityTypeName(EntityTypeEnum.LEARNING)
-                .receiverID(List.of())
+                .receiverID(receiverId)
                 .build();
         producerService.sendMessage(notification);
         return createUserLearning(userLearningRequestDTO);

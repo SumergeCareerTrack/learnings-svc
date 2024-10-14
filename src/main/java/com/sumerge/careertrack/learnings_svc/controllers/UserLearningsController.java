@@ -59,18 +59,27 @@ public class UserLearningsController {
 
     // TODO Should we add an auth token ?
     @PutMapping("/approve/{learningId}")
-    public ResponseEntity<UserLearningResponseDTO> approveUserLearning(@PathVariable UUID learningId) {
-        return ResponseEntity.ok(userLearningsService.approveLearning(learningId));
+    public ResponseEntity<UserLearningResponseDTO> approveUserLearning(
+            @PathVariable UUID learningId,
+            @RequestBody String managerId
+    ) {
+        return ResponseEntity.ok(userLearningsService.approveLearning(learningId,managerId));
     }
 
     @PutMapping("/reject/{learningId}")
-    public ResponseEntity<UserLearningResponseDTO> rejectUserLearning(@PathVariable UUID learningId) {
-        return ResponseEntity.ok(userLearningsService.rejectLearning(learningId));
+    public ResponseEntity<UserLearningResponseDTO> rejectUserLearning(
+            @PathVariable UUID learningId,
+            @RequestBody String managerId
+            ) {
+        return ResponseEntity.ok(userLearningsService.rejectLearning(learningId,managerId));
     }
 
-    @PostMapping("/custom-learning")
-    public ResponseEntity<UserLearningResponseDTO> addCustomLearning(@RequestBody CustomUserLearningRequestDTO customUserLearning) throws Exception {
-        return ResponseEntity.ok(userLearningsService.createCustomLearning(customUserLearning));
+    @PostMapping("/custom-learning/{managerId}")
+    public ResponseEntity<UserLearningResponseDTO> addCustomLearning(
+            @RequestBody CustomUserLearningRequestDTO customUserLearning,
+            @PathVariable String managerId
+    ) throws Exception {
+        return ResponseEntity.ok(userLearningsService.createCustomLearning(customUserLearning,managerId));
     }
 
 }
