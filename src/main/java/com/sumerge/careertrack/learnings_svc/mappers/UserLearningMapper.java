@@ -6,6 +6,8 @@ import com.sumerge.careertrack.learnings_svc.entities.responses.UserLearningResp
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface UserLearningMapper {
 
@@ -26,5 +28,7 @@ public interface UserLearningMapper {
     @Mapping(source = "learning",target ="learning")
     @Mapping(source="booster", target = "booster")
     UserLearningResponseDTO toResponseDTO(UserLearning userLearning);
+
+    List<UserLearningResponseDTO> toResponseDTOList(List<UserLearning> userLearnings);
 
 }

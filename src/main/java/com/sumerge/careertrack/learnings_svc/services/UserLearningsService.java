@@ -2,6 +2,7 @@ package com.sumerge.careertrack.learnings_svc.services;
 
 import com.sumerge.careertrack.learnings_svc.entities.Booster;
 import com.sumerge.careertrack.learnings_svc.entities.Learning;
+import com.sumerge.careertrack.learnings_svc.entities.LearningType;
 import com.sumerge.careertrack.learnings_svc.entities.UserLearning;
 import com.sumerge.careertrack.learnings_svc.entities.enums.ApprovalStatus;
 import com.sumerge.careertrack.learnings_svc.entities.requests.CustomUserLearningRequestDTO;
@@ -13,13 +14,12 @@ import com.sumerge.careertrack.learnings_svc.mappers.CustomUserLearningMapper;
 import com.sumerge.careertrack.learnings_svc.mappers.UserLearningMapper;
 import com.sumerge.careertrack.learnings_svc.entities.requests.UserLearningRequestDTO;
 import com.sumerge.careertrack.learnings_svc.entities.responses.UserLearningResponseDTO;
-import com.sumerge.careertrack.learnings_svc.repositories.BoosterRepository;
-import com.sumerge.careertrack.learnings_svc.repositories.LearningRepository;
-import com.sumerge.careertrack.learnings_svc.repositories.ProofTypesRepository;
-import com.sumerge.careertrack.learnings_svc.repositories.UserLearningsRepository;
+import com.sumerge.careertrack.learnings_svc.repositories.*;
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -32,6 +32,7 @@ public class UserLearningsService {
     private final UserLearningsRepository userLearningsRepository;
     private final UserLearningMapper userLearningMapper;
     private final LearningRepository learningRepository;
+    private final UserScoreService userScoreService;
     private final BoosterRepository boosterRepository;
     private final ProofTypesRepository proofTypesRepository;
     private final CustomUserLearningMapper customUserLearningMapper;
@@ -80,10 +81,9 @@ public class UserLearningsService {
         //case 3 boosterId doesn't exist
         Booster booster = boosterRepository.findFirstByIsActiveTrue()
                 .orElse(null);
-
+        userLearning.setDate(new Date());
         userLearning.setUserId(userLearningRequestDTO.getUserId());
         userLearning.setComment(userLearningRequestDTO.getComment());
-        userLearning.setDate(userLearningRequestDTO.getDate());
         userLearning.setProof(userLearningRequestDTO.getProof());
         userLearning.setLearning(learning);
         userLearning.setBooster(booster);
@@ -114,6 +114,8 @@ public class UserLearningsService {
 
         learning.setApproved(true);
         userLearning.setApprovalStatus(ApprovalStatus.APPROVED);
+        LearningType type = learning.getType();
+        userScoreService.addToUserScore(userLearning.getUserId(),type.getBaseScore());
         userLearning.setComment(comment);
         learningRepository.save(learning);
         return userLearningMapper.toResponseDTO(userLearningsRepository.save(userLearning));
@@ -136,6 +138,11 @@ public class UserLearningsService {
         userLearningRequestDTO.setLearningId(learningResponse.getId());
 
         return createUserLearning(userLearningRequestDTO);
+    }
+
+    public List<UserLearningResponseDTO> getAllSubordinateUserLearnings(List<UUID> usersIds){
+        List<UserLearning> userLearnings = userLearningsRepository.findLatestSubmissionsByUserIds(usersIds);
+        return userLearningMapper.toResponseDTOList(userLearnings);
     }
 
 }

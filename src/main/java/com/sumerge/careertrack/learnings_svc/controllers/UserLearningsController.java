@@ -73,4 +73,9 @@ public class UserLearningsController {
         return ResponseEntity.ok(userLearningsService.createCustomLearning(customUserLearning));
     }
 
+    @PostMapping("/manager")
+    public ResponseEntity<List<UserLearningResponseDTO>> getAllSubordinateUserLearnings(@RequestBody List<UUID> usersIds) {
+        return ResponseEntity.ok(userLearningsService.getAllSubordinateUserLearnings(usersIds));
+    }
+
 }

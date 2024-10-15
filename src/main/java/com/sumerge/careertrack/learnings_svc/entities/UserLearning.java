@@ -35,6 +35,7 @@ public class UserLearning {
     private ApprovalStatus approvalStatus = ApprovalStatus.PENDING;
 
     //TODO dependencies of foreign keys
+    @Column(nullable = false)
     private UUID userId;
 
     @JoinColumn
