@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+//TODO REMOVE THIS IT WAS FOR TESTING PURPOSES
 
 @Service
 public class ProducerService {
@@ -22,8 +23,7 @@ public class ProducerService {
 
     public void sendMessage(NotificationRequestDTO dto)  {
         JSONObject obj= new JSONObject(dto);
-        System.out.println(obj.toString());
-        kafkaTemplate.send("notification", obj.toString());
+        kafkaTemplate.send(topicName, obj.toString());
 
     }
 
