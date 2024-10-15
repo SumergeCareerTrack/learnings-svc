@@ -23,6 +23,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -117,16 +118,7 @@ public class UserLearningsService {
         userLearning.setApprovalStatus(ApprovalStatus.APPROVED);
         List<UUID> receiverId = new ArrayList<UUID>();
         receiverId.add(userLearning.getUserId());
-        //TODO NEED TO GET MANAGER ID ??
-        NotificationRequestDTO notification= NotificationRequestDTO.builder()
-                .seen(false)
-                .date(userLearning.getDate())
-                .actorId(managerId)
-                .entityId(userLearning.getId())
-                .actionName(ActionEnum.APPROVAL)
-                .entityTypeName(EntityTypeEnum.LEARNING)
-                .receiverID(receiverId)
-                .build();
+        NotificationRequestDTO notification=createNotification(userLearning,receiverId,ActionEnum.APPROVAL,managerId,new Date());
         producerService.sendMessage(notification);
         return userLearningMapper.toResponseDTO(userLearningsRepository.save(userLearning));
     }
@@ -136,18 +128,10 @@ public class UserLearningsService {
         UserLearning userLearning = userLearningsRepository.findById(learningId)
                 .orElseThrow(() -> new DoesNotExistException(DoesNotExistException.USER_LEARNING, learningId));
         userLearning.setApprovalStatus(ApprovalStatus.REJECTED);
-        //TODO NEED TO GET MANAGER ID ??
         List<UUID> receiverId = new ArrayList<UUID>();
         receiverId.add(userLearning.getUserId());
-        NotificationRequestDTO notification= NotificationRequestDTO.builder()
-                .seen(false)
-                .date(userLearning.getDate())
-                .actorId(managerId)
-                .entityId(userLearning.getId())
-                .actionName(ActionEnum.REJECTION)
-                .entityTypeName(EntityTypeEnum.LEARNING)
-                .receiverID(receiverId)
-                .build();
+        NotificationRequestDTO notification=
+                createNotification(userLearning,receiverId,ActionEnum.REJECTION,managerId,new Date());
         producerService.sendMessage(notification);
         return userLearningMapper.toResponseDTO(userLearningsRepository.save(userLearning));
     }
@@ -161,18 +145,23 @@ public class UserLearningsService {
         userLearningRequestDTO.setLearningId(learningResponse.getId());
         List<UUID> receiverId = new ArrayList<UUID>();
         receiverId.add(UUID.fromString(id));
-        //TODO NEED TO GET MANAGER ID ??
-        NotificationRequestDTO notification= NotificationRequestDTO.builder()
-                .seen(false)
-                .date(userLearningRequestDTO.getDate())
-                .actorId(userLearningRequestDTO.getUserId())
-                .entityId(userLearningRequestDTO.getLearningId())
-                .actionName(ActionEnum.SUBMISSION)
-                .entityTypeName(EntityTypeEnum.LEARNING)
-                .receiverID(receiverId)
-                .build();
+        NotificationRequestDTO notification=
+                createNotification(userLearningMapper.toUserLearning(userLearningRequestDTO),
+                        receiverId,ActionEnum.SUBMISSION,userLearningRequestDTO.getUserId(),userLearningMapper.toUserLearning(userLearningRequestDTO).getDate());
         producerService.sendMessage(notification);
         return createUserLearning(userLearningRequestDTO);
     }
+    public NotificationRequestDTO createNotification(UserLearning savedLearning, List<UUID> receiverId, ActionEnum actionEnum, UUID actorID, Date date) {
+        return NotificationRequestDTO.builder()
+                .seen(false)
+                .date(date)
+                .actorId(actorID)
+                .entityId(savedLearning.getLearning().getId())
+                .actionName(actionEnum)
+                .entityTypeName(EntityTypeEnum.LEARNING)
+                .receiverID(receiverId)
+                .build();
+    }
+
 
 }
