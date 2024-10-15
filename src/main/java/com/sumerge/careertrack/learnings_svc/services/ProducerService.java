@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
-//TODO REMOVE THIS IT WAS FOR TESTING PURPOSES
 
 @Service
 public class ProducerService {
