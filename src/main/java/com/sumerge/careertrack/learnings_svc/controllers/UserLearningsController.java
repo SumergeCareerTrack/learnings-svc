@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/users-learnings")
 @RequiredArgsConstructor
@@ -73,7 +74,7 @@ public class UserLearningsController {
         return ResponseEntity.ok(userLearningsService.createCustomLearning(customUserLearning));
     }
 
-    @PostMapping("/manager")
+    @PostMapping("/subordinates")
     public ResponseEntity<List<UserLearningResponseDTO>> getAllSubordinateUserLearnings(@RequestBody List<UUID> usersIds) {
         return ResponseEntity.ok(userLearningsService.getAllSubordinateUserLearnings(usersIds));
     }

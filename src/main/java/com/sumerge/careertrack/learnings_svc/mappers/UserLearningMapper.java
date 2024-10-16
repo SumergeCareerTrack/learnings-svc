@@ -12,8 +12,8 @@ import java.util.List;
 public interface UserLearningMapper {
 
     @Mapping(source = "proof" , target = "proof")
-    @Mapping(source = "comment" , target = "comment")
-    @Mapping(source = "date" , target="date")
+    @Mapping(target = "comment" , ignore = true)
+    @Mapping(target="date" , ignore = true)
     @Mapping(source = "userId" ,target = "userId" )
     @Mapping(target ="learning" ,ignore=true)
     @Mapping(target = "booster" , ignore=true)

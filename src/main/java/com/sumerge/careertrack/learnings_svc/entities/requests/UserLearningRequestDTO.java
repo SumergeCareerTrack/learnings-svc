@@ -14,10 +14,6 @@ public class UserLearningRequestDTO {
 
     private String proof;
 
-    private String comment;
-
-    private Date date;
-
     @NonNull
     private UUID userId;
 
