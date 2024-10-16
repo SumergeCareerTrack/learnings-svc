@@ -2,6 +2,7 @@ package com.sumerge.careertrack.learnings_svc.services;
 
 import com.sumerge.careertrack.learnings_svc.entities.Booster;
 import com.sumerge.careertrack.learnings_svc.entities.Learning;
+import com.sumerge.careertrack.learnings_svc.entities.LearningType;
 import com.sumerge.careertrack.learnings_svc.entities.UserLearning;
 import com.sumerge.careertrack.learnings_svc.entities.enums.ActionEnum;
 import com.sumerge.careertrack.learnings_svc.entities.enums.ApprovalStatus;
@@ -10,11 +11,13 @@ import com.sumerge.careertrack.learnings_svc.entities.requests.CustomUserLearnin
 import com.sumerge.careertrack.learnings_svc.entities.requests.LearningRequestDTO;
 import com.sumerge.careertrack.learnings_svc.entities.requests.NotificationRequestDTO;
 import com.sumerge.careertrack.learnings_svc.entities.responses.LearningResponseDTO;
+import com.sumerge.careertrack.learnings_svc.exceptions.AlreadyExistsException;
 import com.sumerge.careertrack.learnings_svc.exceptions.DoesNotExistException;
 import com.sumerge.careertrack.learnings_svc.mappers.CustomUserLearningMapper;
 import com.sumerge.careertrack.learnings_svc.mappers.UserLearningMapper;
 import com.sumerge.careertrack.learnings_svc.entities.requests.UserLearningRequestDTO;
 import com.sumerge.careertrack.learnings_svc.entities.responses.UserLearningResponseDTO;
+
 import com.sumerge.careertrack.learnings_svc.repositories.BoosterRepository;
 import com.sumerge.careertrack.learnings_svc.repositories.LearningRepository;
 import com.sumerge.careertrack.learnings_svc.repositories.ProofTypesRepository;
@@ -27,6 +30,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -37,6 +41,7 @@ public class UserLearningsService {
     private final UserLearningsRepository userLearningsRepository;
     private final UserLearningMapper userLearningMapper;
     private final LearningRepository learningRepository;
+    private final UserScoreService userScoreService;
     private final BoosterRepository boosterRepository;
     private final ProofTypesRepository proofTypesRepository;
     private final CustomUserLearningMapper customUserLearningMapper;
@@ -61,10 +66,9 @@ public class UserLearningsService {
         return userLearningMapper.toResponseDTO(userLearning);
     }
 
-    //TODO UserNeeded & its
     public List<UserLearningResponseDTO> getUserLearningsByUserId(UUID userId) {
-        //TODO find by user ID when user added
-        List<UserLearning> userLearnings= userLearningsRepository.findAllById(userId);
+        //TODO validate userId already exist
+        List<UserLearning> userLearnings= userLearningsRepository.findAllByUserId(userId);
         return userLearnings.stream().map(userLearningMapper::toResponseDTO).collect(Collectors.toList());
     }
 
@@ -94,10 +98,8 @@ public class UserLearningsService {
         //case 3 boosterId doesn't exist
         Booster booster = boosterRepository.findFirstByIsActiveTrue()
                 .orElse(null);
-
+        userLearning.setDate(new Date());
         userLearning.setUserId(userLearningRequestDTO.getUserId());
-        userLearning.setComment(userLearningRequestDTO.getComment());
-        userLearning.setDate(userLearningRequestDTO.getDate());
         userLearning.setProof(userLearningRequestDTO.getProof());
         userLearning.setLearning(learning);
         userLearning.setBooster(booster);
@@ -119,24 +121,35 @@ public class UserLearningsService {
         return "User Learning deleted";
     }
 
-    //TODO add already approved exception
-    public UserLearningResponseDTO approveLearning(UUID learningId,String id){
+
+    public UserLearningResponseDTO approveLearning(UUID learningId , String comment , String id)){
         UUID managerId = UUID.fromString(id);
         UserLearning userLearning = userLearningsRepository.findById(learningId)
                 .orElseThrow(() -> new DoesNotExistException(DoesNotExistException.USER_LEARNING, learningId));
+        Learning learning = learningRepository.findById(userLearning.getLearning().getId())
+                .orElseThrow(() -> new DoesNotExistException(DoesNotExistException.LEARNING, userLearning.getLearning().getId()));
+        learning.setApproved(true);
         userLearning.setApprovalStatus(ApprovalStatus.APPROVED);
+        LearningType type = learning.getType();
+        userScoreService.addToUserScore(userLearning.getUserId(),type.getBaseScore());
+        userLearning.setComment(comment);
         List<UUID> receiverId = new ArrayList<UUID>();
         receiverId.add(userLearning.getUserId());
         NotificationRequestDTO notification=createNotification(userLearning,receiverId,ActionEnum.APPROVAL,managerId,new Date());
         producerService.sendMessage(notification);
+        learningRepository.save(learning);
         return userLearningMapper.toResponseDTO(userLearningsRepository.save(userLearning));
     }
 
-    public UserLearningResponseDTO rejectLearning(UUID learningId,String id){
+
+
+    public UserLearningResponseDTO rejectLearning(UUID learningId,String id , String comment){
         UUID managerId = UUID.fromString(id);
         UserLearning userLearning = userLearningsRepository.findById(learningId)
                 .orElseThrow(() -> new DoesNotExistException(DoesNotExistException.USER_LEARNING, learningId));
+
         userLearning.setApprovalStatus(ApprovalStatus.REJECTED);
+        userLearning.setComment(comment);
         List<UUID> receiverId = new ArrayList<UUID>();
         receiverId.add(userLearning.getUserId());
         NotificationRequestDTO notification=
@@ -149,7 +162,7 @@ public class UserLearningsService {
         UUID managerId = UUID.fromString(id);
         LearningRequestDTO learningRequestDTO = customUserLearningMapper.toLearningRequestDTO(customUserLearning);
         UserLearningRequestDTO userLearningRequestDTO = customUserLearningMapper.toUserLearningRequestDTO(customUserLearning);
-
+        learningRequestDTO.setApproved(false);
         LearningResponseDTO learningResponse = learningService.create(learningRequestDTO);
         userLearningRequestDTO.setLearningId(learningResponse.getId());
         List<UUID> receiverId = new ArrayList<UUID>();
@@ -172,5 +185,10 @@ public class UserLearningsService {
                 .build();
     }
 
+
+    public List<UserLearningResponseDTO> getAllSubordinateUserLearnings(List<UUID> usersIds){
+        List<UserLearning> userLearnings = userLearningsRepository.findLatestSubmissionsByUserIds(usersIds);
+        return userLearningMapper.toResponseDTOList(userLearnings);
+    }
 
 }

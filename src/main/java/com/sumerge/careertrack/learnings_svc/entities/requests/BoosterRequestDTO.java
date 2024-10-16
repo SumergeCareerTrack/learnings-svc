@@ -11,7 +11,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BoosterRequestDTO {
+public class
+BoosterRequestDTO {
 
     @lombok.NonNull
     private String name;

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/users-learnings")
 @RequiredArgsConstructor
@@ -66,8 +67,7 @@ public class UserLearningsController {
        return ResponseEntity.ok(userLearningsService.deleteUserLearning(learningId));
     }
 
-    // TODO Should we add an auth token ?
-    @PutMapping("/approve/{learningId}")
+
     public ResponseEntity<UserLearningResponseDTO> approveUserLearning(
             @PathVariable UUID learningId,
             @RequestBody String managerId
@@ -81,6 +81,7 @@ public class UserLearningsController {
             @RequestBody String managerId
             ) {
         return ResponseEntity.ok(userLearningsService.rejectLearning(learningId,managerId));
+
     }
 
     @PostMapping("/custom-learning/{managerId}")
@@ -89,6 +90,11 @@ public class UserLearningsController {
             @PathVariable String managerId
     ) throws Exception {
         return ResponseEntity.ok(userLearningsService.createCustomLearning(customUserLearning,managerId));
+    }
+
+    @PostMapping("/subordinates")
+    public ResponseEntity<List<UserLearningResponseDTO>> getAllSubordinateUserLearnings(@RequestBody List<UUID> usersIds) {
+        return ResponseEntity.ok(userLearningsService.getAllSubordinateUserLearnings(usersIds));
     }
 
 }

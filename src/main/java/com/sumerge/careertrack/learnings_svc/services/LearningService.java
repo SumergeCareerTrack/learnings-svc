@@ -50,7 +50,7 @@ public class LearningService {
 
         newLearning.setUrl(learning.getUrl());
         newLearning.setDescription(learning.getDescription());
-        newLearning.setPending(learning.isPending());
+        newLearning.setApproved(learning.isApproved());
         learningRep.save(newLearning);
 
         return learningMapper.toLearningDTO(newLearning);
@@ -137,7 +137,7 @@ public class LearningService {
 
 
         updateIfPresent(learning.getTitle(), learningToUpdate::setTitle);
-        updateIfPresent(learning.isPending(), learningToUpdate::setPending);
+        updateIfPresent(learning.isApproved(), learningToUpdate::setApproved);
         updateIfPresent(learning.getDescription(), learningToUpdate::setDescription);
         updateIfPresent(learning.getUrl(), learningToUpdate::setUrl);
         updateIfPresent(learning.getLengthInHours(), learningToUpdate::setLengthInHours);
@@ -172,7 +172,7 @@ public class LearningService {
     }
 
     public List<LearningResponseDTO> getAllPending() {
-        List<Learning> learnings = learningRep.findByPending(true);
+        List<Learning> learnings = learningRep.findByApproved(true);
         return  learnings.stream().map(learningMapper::toLearningDTO).toList();
     }
     public List<LearningResponseDTO> getAllPendingPaginated(Pageable pageable) {
@@ -184,7 +184,7 @@ public class LearningService {
 
 
     public List<LearningResponseDTO> getAllNonPending() {
-        List<Learning> learnings = learningRep.findByPending(false);
+        List<Learning> learnings = learningRep.findByApproved(false);
         return  learnings.stream().map(learningMapper::toLearningDTO).toList();
     }
     public List<LearningResponseDTO> getAllNonPendingPaginated(Pageable pageable) {

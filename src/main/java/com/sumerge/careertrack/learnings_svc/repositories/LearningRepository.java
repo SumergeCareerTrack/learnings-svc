@@ -25,6 +25,7 @@ public interface LearningRepository extends JpaRepository<Learning, UUID> {
     boolean existsByUrlAndDescriptionAndTypeAndSubject(String url, String description, LearningType type, LearningSubject subject);
 
 
+
     List<Learning> findByPending(boolean pending);
     Page<Learning> findByPending(boolean pending, Pageable page);
 
