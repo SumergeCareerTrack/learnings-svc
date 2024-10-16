@@ -20,6 +20,8 @@ import com.sumerge.careertrack.learnings_svc.repositories.LearningRepository;
 import com.sumerge.careertrack.learnings_svc.repositories.ProofTypesRepository;
 import com.sumerge.careertrack.learnings_svc.repositories.UserLearningsRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -45,6 +47,13 @@ public class UserLearningsService {
         List<UserLearning> userLearnings = userLearningsRepository.findAll();
         return userLearnings.stream().map(userLearningMapper::toResponseDTO).collect(Collectors.toList());
     }
+    public List<UserLearningResponseDTO> getAllUserLearningsPaginated(Pageable pageable) {
+        Page<UserLearning> userLearningsPage = userLearningsRepository.findAll(pageable);
+        return userLearningsPage.getContent().stream()
+                .map(userLearningMapper::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
 
     public UserLearningResponseDTO getUserLearningByUserLearningId(UUID learningId) {
         UserLearning userLearning = userLearningsRepository.findById(learningId)

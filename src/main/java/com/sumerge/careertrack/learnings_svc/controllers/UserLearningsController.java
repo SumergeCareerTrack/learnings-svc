@@ -6,6 +6,7 @@ import com.sumerge.careertrack.learnings_svc.entities.responses.UserLearningResp
 import com.sumerge.careertrack.learnings_svc.services.UserLearningsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,9 +21,17 @@ public class UserLearningsController {
     private final UserLearningsService userLearningsService;
 
     @GetMapping
-    public ResponseEntity<List<UserLearningResponseDTO>> getAllUsersLearnings() {
-        return ResponseEntity.ok(userLearningsService.getAllUserLearnings());
+    public ResponseEntity<List<UserLearningResponseDTO>> getAllUsersLearnings(
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size) {
+
+        if (page == null || size == null || size <= 0) {
+            return ResponseEntity.ok(userLearningsService.getAllUserLearnings());
+        } else {
+            return ResponseEntity.ok(userLearningsService.getAllUserLearningsPaginated(PageRequest.of(page, size)));
+        }
     }
+
 
     //specific user-learning
     @GetMapping("/{learningId}")
