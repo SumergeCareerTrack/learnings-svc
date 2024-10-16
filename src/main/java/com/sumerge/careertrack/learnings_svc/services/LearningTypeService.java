@@ -2,7 +2,10 @@ package com.sumerge.careertrack.learnings_svc.services;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.sumerge.careertrack.learnings_svc.entities.Learning;
@@ -37,6 +40,12 @@ public class LearningTypeService {
     public List<LearningTypeResponseDTO> getAll() {
         List<LearningType> types = learningTypeRepository.findAll();
         return types.stream().map(learningTypeMapper::toLearningTypeDTO).collect(java.util.stream.Collectors.toList());
+    }
+    public List<LearningTypeResponseDTO> getAllTypesPaginated(Pageable pageable) {
+        Page<LearningType> typesPage = learningTypeRepository.findAll(pageable);
+        return typesPage.getContent().stream()
+                .map(learningTypeMapper::toLearningTypeDTO)
+                .collect(Collectors.toList());
     }
 
     public LearningTypeResponseDTO getById(UUID typeId) throws Exception {
