@@ -67,20 +67,22 @@ public class UserLearningsController {
        return ResponseEntity.ok(userLearningsService.deleteUserLearning(learningId));
     }
 
-
+    @PutMapping("/approve/{learningId}")
     public ResponseEntity<UserLearningResponseDTO> approveUserLearning(
             @PathVariable UUID learningId,
-            @RequestBody String managerId
+            @RequestParam String comment,
+            @RequestParam String managerId
     ) {
-        return ResponseEntity.ok(userLearningsService.approveLearning(learningId,managerId));
+        return ResponseEntity.ok(userLearningsService.approveLearning(learningId,comment,managerId));
     }
 
     @PutMapping("/reject/{learningId}")
     public ResponseEntity<UserLearningResponseDTO> rejectUserLearning(
             @PathVariable UUID learningId,
-            @RequestBody String managerId
+            @RequestParam String comment,
+            @RequestParam String managerId
             ) {
-        return ResponseEntity.ok(userLearningsService.rejectLearning(learningId,managerId));
+        return ResponseEntity.ok(userLearningsService.rejectLearning(learningId,managerId,comment));
 
     }
 

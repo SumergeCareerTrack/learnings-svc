@@ -18,4 +18,5 @@ public class UserLearningRequestDTO {
     private UUID userId;
 
     private UUID learningId;
+
 }

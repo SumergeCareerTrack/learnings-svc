@@ -28,10 +28,8 @@ public class ScoreboardLevelController {
             @RequestParam(required = false) Integer size) {
 
         if (page == null || size == null || size <= 0) {
-            // Fetch all scoreboard levels without pagination
             return ResponseEntity.ok(scoreboardService.getAll());
         } else {
-            // Paginated fetch
             return ResponseEntity.ok(scoreboardService.getAllScoreboardLevelsPaginated(PageRequest.of(page, size)));
         }
     }

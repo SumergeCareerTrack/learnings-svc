@@ -26,7 +26,7 @@ public interface LearningRepository extends JpaRepository<Learning, UUID> {
 
 
 
-    List<Learning> findByPending(boolean pending);
-    Page<Learning> findByPending(boolean pending, Pageable page);
+    List<Learning> findByApproved(boolean pending);
+    Page<Learning> findByApproved(boolean pending, Pageable page);
 
 }
