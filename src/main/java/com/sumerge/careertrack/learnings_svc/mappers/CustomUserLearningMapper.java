@@ -19,8 +19,6 @@ public interface CustomUserLearningMapper {
     LearningRequestDTO toLearningRequestDTO(CustomUserLearningRequestDTO requestDTO);
 
     @Mapping(source = "proof" ,target="proof")
-    @Mapping(source = "comment" ,target="comment")
-    @Mapping(source = "date" ,target="date")
     @Mapping(source = "userId" , target="userId")
     UserLearningRequestDTO toUserLearningRequestDTO(CustomUserLearningRequestDTO requestDTO);
 

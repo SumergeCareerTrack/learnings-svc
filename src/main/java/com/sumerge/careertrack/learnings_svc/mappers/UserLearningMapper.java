@@ -1,16 +1,13 @@
 package com.sumerge.careertrack.learnings_svc.mappers;
-
 import com.sumerge.careertrack.learnings_svc.entities.UserLearning;
 import com.sumerge.careertrack.learnings_svc.entities.requests.UserLearningRequestDTO;
 import com.sumerge.careertrack.learnings_svc.entities.responses.UserLearningResponseDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-
 import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface UserLearningMapper {
-
     @Mapping(source = "proof" , target = "proof")
     @Mapping(target = "comment" , ignore = true)
     @Mapping(target="date" , ignore = true)
@@ -28,7 +25,5 @@ public interface UserLearningMapper {
     @Mapping(source = "learning",target ="learning")
     @Mapping(source="booster", target = "booster")
     UserLearningResponseDTO toResponseDTO(UserLearning userLearning);
-
     List<UserLearningResponseDTO> toResponseDTOList(List<UserLearning> userLearnings);
-
 }

@@ -122,7 +122,7 @@ public class UserLearningsService {
     }
 
 
-    public UserLearningResponseDTO approveLearning(UUID learningId , String comment , String id)){
+    public UserLearningResponseDTO approveLearning(UUID learningId , String comment , String id){
         UUID managerId = UUID.fromString(id);
         UserLearning userLearning = userLearningsRepository.findById(learningId)
                 .orElseThrow(() -> new DoesNotExistException(DoesNotExistException.USER_LEARNING, learningId));

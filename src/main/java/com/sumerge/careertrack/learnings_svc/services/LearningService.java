@@ -176,7 +176,7 @@ public class LearningService {
         return  learnings.stream().map(learningMapper::toLearningDTO).toList();
     }
     public List<LearningResponseDTO> getAllPendingPaginated(Pageable pageable) {
-        Page<Learning> learningsPage = learningRep.findByPending(true, pageable);
+        Page<Learning> learningsPage = learningRep.findByApproved(true, pageable);
         return learningsPage.getContent().stream()
                 .map(learningMapper::toLearningDTO)
                 .collect(Collectors.toList());
@@ -188,7 +188,7 @@ public class LearningService {
         return  learnings.stream().map(learningMapper::toLearningDTO).toList();
     }
     public List<LearningResponseDTO> getAllNonPendingPaginated(Pageable pageable) {
-        Page<Learning> learningsPage = learningRep.findByPending(false, pageable);
+        Page<Learning> learningsPage = learningRep.findByApproved(false, pageable);
         return learningsPage.getContent().stream()
                 .map(learningMapper::toLearningDTO)
                 .collect(Collectors.toList());
