@@ -25,7 +25,8 @@ public class UserLearning {
     private String proof;
 
     @Column(nullable = false)
-    private String comment;
+    @Builder.Default
+    private String comment ="";
 
     @Column(nullable = false)
     private Date date;

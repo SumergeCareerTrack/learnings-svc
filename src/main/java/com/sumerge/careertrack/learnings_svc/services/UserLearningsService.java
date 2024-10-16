@@ -83,7 +83,6 @@ public class UserLearningsService {
                 .orElse(null);
         userLearning.setDate(new Date());
         userLearning.setUserId(userLearningRequestDTO.getUserId());
-        userLearning.setComment(userLearningRequestDTO.getComment());
         userLearning.setProof(userLearningRequestDTO.getProof());
         userLearning.setLearning(learning);
         userLearning.setBooster(booster);
