@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -42,24 +43,53 @@ public class LearningController {
     ///////////// * GET METHODS */////////////
     @Tag(name = "Get Learnings")
     @GetMapping("/")
-    public ResponseEntity<List<LearningResponseDTO>> getAllLearnings() {
-        List<LearningResponseDTO> learnings = learningService.getAll();
-        return ResponseEntity.ok(learnings);
+    public ResponseEntity<List<LearningResponseDTO>> getAllLearnings(
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size) {
+
+        if (page == null || size == null || size <= 0) {
+            // Fetch all learnings without pagination
+            List<LearningResponseDTO> learnings = learningService.getAll();
+            return ResponseEntity.ok(learnings);
+        } else {
+            // Paginated fetch
+            return ResponseEntity.ok(learningService.getAllPaginated(PageRequest.of(page, size)));
+        }
     }
 
     @Tag(name = "Get Learnings")
     @GetMapping("/pending")
-    public ResponseEntity<List<LearningResponseDTO>> getAllPendingLearnings() {
-        List<LearningResponseDTO> learnings = learningService.getAllPending();
-        return ResponseEntity.ok(learnings);
+    public ResponseEntity<List<LearningResponseDTO>> getAllPendingLearnings(
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size) {
+
+        if (page == null || size == null || size <= 0) {
+            // Fetch all pending learnings without pagination
+            List<LearningResponseDTO> learnings = learningService.getAllPending();
+            return ResponseEntity.ok(learnings);
+        } else {
+            // Paginated fetch
+            return ResponseEntity.ok(learningService.getAllPendingPaginated(PageRequest.of(page, size)));
+        }
     }
+
 
     @Tag(name = "Get Learnings")
     @GetMapping("/approved")
-    public ResponseEntity<List<LearningResponseDTO>> getAllNonPendingLearnings() {
-        List<LearningResponseDTO> learnings = learningService.getAllNonPending();
-        return ResponseEntity.ok(learnings);
+    public ResponseEntity<List<LearningResponseDTO>> getAllNonPendingLearnings(
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size) {
+
+        if (page == null || size == null || size <= 0) {
+            // Fetch all approved learnings without pagination
+            List<LearningResponseDTO> learnings = learningService.getAllNonPending();
+            return ResponseEntity.ok(learnings);
+        } else {
+            // Paginated fetch
+            return ResponseEntity.ok(learningService.getAllNonPendingPaginated(PageRequest.of(page, size)));
+        }
     }
+
 
 
     @Tag(name = "Get Learnings")
@@ -73,17 +103,34 @@ public class LearningController {
     @Tag(name = "Get Learnings")
     @GetMapping("/type")
     public ResponseEntity<List<LearningResponseDTO>> getAllLearningsByType(
-            @RequestParam String type) {
-        List<LearningResponseDTO> learnings = learningService.getLearningByType(type);
-        return ResponseEntity.ok(learnings);
+            @RequestParam String type,
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size) {
+
+        if (page == null || size == null || size <= 0) {
+            // Fetch all learnings by type without pagination
+            List<LearningResponseDTO> learnings = learningService.getLearningByType(type);
+            return ResponseEntity.ok(learnings);
+        } else {
+            // Paginated fetch
+            return ResponseEntity.ok(learningService.getLearningByTypePaginated(type, PageRequest.of(page, size)));
+        }
     }
+
 
     @Tag(name = "Get Learnings")
     @GetMapping("/subject")
     public ResponseEntity<List<LearningResponseDTO>> getAllLearningsBySubject(
-            @RequestParam String subject) throws Exception {
-        List<LearningResponseDTO> learnings = learningService.getAllLearningsBySubject(subject);
-        return ResponseEntity.ok(learnings);
+            @RequestParam String subject,
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size) throws Exception {
+
+        if (page == null || size == null || size <= 0) {
+            List<LearningResponseDTO> learnings = learningService.getAllLearningsBySubject(subject);
+            return ResponseEntity.ok(learnings);
+        } else {
+            return ResponseEntity.ok(learningService.getAllLearningsBySubjectPaginated(subject, PageRequest.of(page, size)));
+        }
     }
 
     ///////////// * UPDATE METHODS */////////////
