@@ -30,4 +30,6 @@ public class LearningResponseDTO {
     private String subjectName;
 
     private float lengthInHours;
+
+    private boolean approved;
 }

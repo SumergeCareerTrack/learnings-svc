@@ -25,7 +25,8 @@ public class UserLearning {
     private String proof;
 
     @Column(nullable = false)
-    private String comment;
+    @Builder.Default
+    private String comment ="";
 
     @Column(nullable = false)
     private Date date;
@@ -35,6 +36,7 @@ public class UserLearning {
     private ApprovalStatus approvalStatus = ApprovalStatus.PENDING;
 
     //TODO dependencies of foreign keys
+    @Column(nullable = false)
     private UUID userId;
 
     @JoinColumn

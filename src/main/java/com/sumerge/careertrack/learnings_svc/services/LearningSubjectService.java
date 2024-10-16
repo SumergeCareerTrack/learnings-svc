@@ -2,7 +2,10 @@ package com.sumerge.careertrack.learnings_svc.services;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.sumerge.careertrack.learnings_svc.entities.Learning;
@@ -51,6 +54,12 @@ public class LearningSubjectService {
         return subjects.stream().map(learningSubjectMapper::toLearningSubjectDTO)
                 .collect(java.util.stream.Collectors.toList());
     }
+    public List<LearningSubjectResponseDTO> getAllSubjectsPaginated(Pageable pageable) {
+        Page<LearningSubject> subjectsPage = learningSubjectRepository.findAll(pageable);
+        return subjectsPage.getContent().stream()
+                .map(learningSubjectMapper::toLearningSubjectDTO)
+                .collect(Collectors.toList());
+    }
 
     public LearningSubjectResponseDTO getSubjectById(UUID subjectId) throws Exception {
         boolean exists = learningSubjectRepository.existsById(subjectId);
@@ -66,14 +75,19 @@ public class LearningSubjectService {
     public LearningSubjectResponseDTO updateSubject(UUID id, LearningSubjectRequestDTO learning) throws Exception {
         if (!learningSubjectRepository.existsById(id)) {
             throw new DoesNotExistException(DoesNotExistException.LEARNING_SUBJECT, id);
-
         }
         LearningSubject subject = learningSubjectRepository.findById(id).get();
-        subject.setName(learning.getName());
-        if (learning.getType().toLowerCase().equals("functional")) {
-            subject.setType(SubjectType.FUNCTIONAL);
-        } else {
-            subject.setType(SubjectType.ORGANISATIONAL);
+        if(learning.getName()!=null)
+        {
+            subject.setName(learning.getName());
+        }
+        if(learning.getType()!=null)
+        {
+            if (learning.getType().toLowerCase().equals("functional")) {
+                subject.setType(SubjectType.FUNCTIONAL);
+            } else {
+                subject.setType(SubjectType.ORGANISATIONAL);
+            }
         }
         LearningSubject updatedLearning = learningSubjectRepository.save(subject);
         return learningSubjectMapper.toLearningSubjectDTO(updatedLearning);

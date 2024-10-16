@@ -13,10 +13,9 @@ import java.util.UUID;
 @AllArgsConstructor
 public class LearningRequestDTO {
 
-    @lombok.NonNull
+
     private UUID type;
 
-    @lombok.NonNull
     private UUID subject;
 
     private String title;
@@ -26,5 +25,7 @@ public class LearningRequestDTO {
     private String description;
 
     private float lengthInHours;
+
+    private boolean approved;
 
 }

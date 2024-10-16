@@ -2,6 +2,8 @@ package com.sumerge.careertrack.learnings_svc.services;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.sumerge.careertrack.learnings_svc.entities.ScoreboardLevel;
@@ -18,12 +20,17 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ScoreboardService {
 
-    private ScoreboardLevelRepository repository;
-    private ScoreboardLevelMapper mapper;
+    private final ScoreboardLevelRepository repository;
+    private final ScoreboardLevelMapper mapper;
 
     public List<ScoreboardLevel> getAll() {
         return repository.findAll();
     }
+    public List<ScoreboardLevel> getAllScoreboardLevelsPaginated(Pageable pageable) {
+        Page<ScoreboardLevel> scoreboardLevelsPage = repository.findAll(pageable);
+        return scoreboardLevelsPage.getContent();
+    }
+
 
     public ScoreboardLevelResponseDTO getByName(String levelName) {
         ScoreboardLevel level = repository.findByName(levelName)

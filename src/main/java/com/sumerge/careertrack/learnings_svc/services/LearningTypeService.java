@@ -2,7 +2,10 @@ package com.sumerge.careertrack.learnings_svc.services;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.sumerge.careertrack.learnings_svc.entities.Learning;
@@ -38,6 +41,12 @@ public class LearningTypeService {
         List<LearningType> types = learningTypeRepository.findAll();
         return types.stream().map(learningTypeMapper::toLearningTypeDTO).collect(java.util.stream.Collectors.toList());
     }
+    public List<LearningTypeResponseDTO> getAllTypesPaginated(Pageable pageable) {
+        Page<LearningType> typesPage = learningTypeRepository.findAll(pageable);
+        return typesPage.getContent().stream()
+                .map(learningTypeMapper::toLearningTypeDTO)
+                .collect(Collectors.toList());
+    }
 
     public LearningTypeResponseDTO getById(UUID typeId) throws Exception {
         if (!learningTypeRepository.existsById(typeId)) {
@@ -53,8 +62,12 @@ public class LearningTypeService {
             throw new DoesNotExistException(DoesNotExistException.LEARNING_TYPE, id);
         }
         LearningType type = learningTypeRepository.findById(id).get();
+        if(!learningType.getName().isEmpty()){
         type.setName(learningType.getName());
-        type.setBaseScore(learningType.getBaseScore());
+        }
+        if(learningType.getBaseScore()!=0){
+            type.setBaseScore(learningType.getBaseScore());
+        }
         LearningType savedLearning = learningTypeRepository.save(type);
         return learningTypeMapper.toLearningTypeDTO(savedLearning);
     }

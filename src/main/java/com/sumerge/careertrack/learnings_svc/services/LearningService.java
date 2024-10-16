@@ -13,10 +13,14 @@ import com.sumerge.careertrack.learnings_svc.repositories.LearningRepository;
 import com.sumerge.careertrack.learnings_svc.repositories.LearningSubjectRepository;
 import com.sumerge.careertrack.learnings_svc.repositories.LearningTypeRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +40,8 @@ public class LearningService {
         );
         newLearning.setType(type);
         newLearning.setSubject(Subject);
-        boolean exists = learningRep.existsByUrlAndDescriptionAndTypeAndSubject(learning.getUrl(), learning.getDescription(), type, Subject);
+        boolean exists = learningRep.existsByUrlAndDescriptionAndTypeAndSubject(
+                learning.getUrl(), learning.getDescription(), type, Subject);
 
         if(exists)
         {
@@ -45,20 +50,22 @@ public class LearningService {
 
         newLearning.setUrl(learning.getUrl());
         newLearning.setDescription(learning.getDescription());
+        newLearning.setApproved(learning.isApproved());
         learningRep.save(newLearning);
-
 
         return learningMapper.toLearningDTO(newLearning);
     }
-
-
-
 
     public List<LearningResponseDTO> getAll() {
         List<Learning> learnings = learningRep.findAll();
         return  learnings.stream().map(learningMapper::toLearningDTO).toList();
     }
-
+    public List<LearningResponseDTO> getAllPaginated(Pageable pageable) {
+        Page<Learning> learningsPage = learningRep.findAll(pageable);
+        return learningsPage.getContent().stream()
+                .map(learningMapper::toLearningDTO)
+                .collect(Collectors.toList());
+    }
 
     public LearningResponseDTO getLearningById(UUID id) throws Exception {
         Learning learning = learningRep.findById(id).orElseThrow(
@@ -74,9 +81,20 @@ public class LearningService {
         }
         LearningType learnType = learningTypeRepository.findByName(typeName);
         List<Learning> learnings = learningRep.findByType(learnType);
-        System.out.println(learnings);
         return learnings.stream().map(learningMapper::toLearningDTO).toList();
     }
+    public List<LearningResponseDTO> getLearningByTypePaginated(String typeName, Pageable pageable) {
+        boolean typeExists = learningTypeRepository.existsByName(typeName);
+        if (!typeExists) {
+            throw new DoesNotExistException(DoesNotExistException.LEARNING_TYPE, typeName);
+        }
+        LearningType learnType = learningTypeRepository.findByName(typeName);
+        Page<Learning> learningsPage = learningRep.findByType(learnType, pageable);
+        return learningsPage.getContent().stream()
+                .map(learningMapper::toLearningDTO)
+                .collect(Collectors.toList());
+    }
+
 
 
     public List<LearningResponseDTO> getAllLearningsBySubject(String subject) throws Exception {
@@ -89,27 +107,61 @@ public class LearningService {
         return learnings.stream().map(learningMapper::toLearningDTO).toList();
 
     }
+    public List<LearningResponseDTO> getAllLearningsBySubjectPaginated(String subject, Pageable pageable) throws Exception {
+        boolean subjectExists = learningSubjectRepository.existsByName(subject);
+        if (!subjectExists) {
+            throw new DoesNotExistException(DoesNotExistException.LEARNING_SUBJECT, subject);
+        }
+        LearningSubject learnSubject = learningSubjectRepository.findByName(subject);
+        Page<Learning> learningsPage = learningRep.findBySubject(learnSubject, pageable);
+        return learningsPage.getContent().stream()
+                .map(learningMapper::toLearningDTO)
+                .collect(Collectors.toList());
+    }
+
 
     public LearningResponseDTO updateLearning(UUID id, LearningRequestDTO learning) throws Exception {
-        Learning learningToUpdate = learningRep.findById(id).orElseThrow(
-                ()-> new DoesNotExistException(DoesNotExistException.LEARNING, id)
-        );
-        LearningType type = learningTypeRepository.findById(learning.getType()).orElseThrow(
-                ()-> new DoesNotExistException(DoesNotExistException.LEARNING_TYPE, learning.getType())
-        );
-        LearningSubject Subject = learningSubjectRepository.findById(learning.getSubject()).orElseThrow(
-                ()-> new DoesNotExistException(DoesNotExistException.LEARNING_SUBJECT, learning.getSubject())
-        );
-        learningToUpdate.setType(type);
-        learningToUpdate.setSubject(Subject);
-        learningToUpdate.setDescription(learning.getDescription());
-        learningToUpdate.setUrl(learning.getUrl());
-        learningToUpdate.setLengthInHours(learning.getLengthInHours());
-        LearningResponseDTO updatedLearning = learningMapper.toLearningDTO(learningToUpdate);
+        Learning learningToUpdate = learningRep.findById(id)
+                .orElseThrow(() -> new DoesNotExistException(DoesNotExistException.LEARNING, id));
+
+        if(learning.getType() != null){
+            updateIfPresent(learning.getType(),
+                    (typeId) -> learningToUpdate.setType(getLearningTypeById(typeId)));
+        }
+        if(learning.getSubject() != null)
+        {
+
+            updateIfPresent(learning.getSubject(),
+                    (subjectId) -> learningToUpdate.setSubject(getLearningSubjectById(subjectId)));
+        }
+
+
+        updateIfPresent(learning.getTitle(), learningToUpdate::setTitle);
+        updateIfPresent(learning.isApproved(), learningToUpdate::setApproved);
+        updateIfPresent(learning.getDescription(), learningToUpdate::setDescription);
+        updateIfPresent(learning.getUrl(), learningToUpdate::setUrl);
+        updateIfPresent(learning.getLengthInHours(), learningToUpdate::setLengthInHours);
+
+
         learningRep.save(learningToUpdate);
-        return updatedLearning;
+        return learningMapper.toLearningDTO(learningToUpdate);
+    }
 
 
+    private <T> void updateIfPresent(T value, Consumer<T> updater) {
+        if (value != null) {
+            updater.accept(value);
+        }
+    }
+
+    private LearningType getLearningTypeById(UUID typeId) throws DoesNotExistException {
+        return learningTypeRepository.findById(typeId)
+                .orElseThrow(() -> new DoesNotExistException(DoesNotExistException.LEARNING_TYPE, typeId));
+    }
+
+    private LearningSubject getLearningSubjectById(UUID subjectId) throws DoesNotExistException {
+        return learningSubjectRepository.findById(subjectId)
+                .orElseThrow(() -> new DoesNotExistException(DoesNotExistException.LEARNING_SUBJECT, subjectId));
     }
 
     public void deleteLearning(UUID id) {
@@ -118,4 +170,28 @@ public class LearningService {
         }
         learningRep.deleteById(id);
     }
+
+    public List<LearningResponseDTO> getAllPending() {
+        List<Learning> learnings = learningRep.findByApproved(true);
+        return  learnings.stream().map(learningMapper::toLearningDTO).toList();
+    }
+    public List<LearningResponseDTO> getAllPendingPaginated(Pageable pageable) {
+        Page<Learning> learningsPage = learningRep.findByApproved(true, pageable);
+        return learningsPage.getContent().stream()
+                .map(learningMapper::toLearningDTO)
+                .collect(Collectors.toList());
+    }
+
+
+    public List<LearningResponseDTO> getAllNonPending() {
+        List<Learning> learnings = learningRep.findByApproved(false);
+        return  learnings.stream().map(learningMapper::toLearningDTO).toList();
+    }
+    public List<LearningResponseDTO> getAllNonPendingPaginated(Pageable pageable) {
+        Page<Learning> learningsPage = learningRep.findByApproved(false, pageable);
+        return learningsPage.getContent().stream()
+                .map(learningMapper::toLearningDTO)
+                .collect(Collectors.toList());
+    }
+
 }

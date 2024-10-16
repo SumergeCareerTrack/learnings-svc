@@ -3,15 +3,9 @@ package com.sumerge.careertrack.learnings_svc.controllers;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.sumerge.careertrack.learnings_svc.entities.requests.ProofTypeRequestDTO;
 import com.sumerge.careertrack.learnings_svc.entities.responses.ProofTypeResponseDTO;
@@ -27,8 +21,15 @@ public class ProofTypeController {
     private final ProofTypeService proofTypeService;
 
     @GetMapping
-    public ResponseEntity<List<ProofTypeResponseDTO>> getAllProofTypes() {
-        return ResponseEntity.ok(proofTypeService.getAllProofTypes());
+    public ResponseEntity<List<ProofTypeResponseDTO>> getAllProofTypes(
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size) {
+
+        if (page == null || size == null || size <= 0) {
+            return ResponseEntity.ok(proofTypeService.getAllProofTypes());
+        } else {
+            return ResponseEntity.ok(proofTypeService.getAllProofTypesPaginated(PageRequest.of(page, size)));
+        }
     }
 
     @GetMapping("/{typeId}")

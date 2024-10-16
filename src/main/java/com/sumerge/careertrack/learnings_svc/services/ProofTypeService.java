@@ -7,6 +7,8 @@ import com.sumerge.careertrack.learnings_svc.entities.requests.ProofTypeRequestD
 import com.sumerge.careertrack.learnings_svc.entities.responses.ProofTypeResponseDTO;
 import com.sumerge.careertrack.learnings_svc.repositories.ProofTypesRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,6 +25,12 @@ public class ProofTypeService {
     public List<ProofTypeResponseDTO> getAllProofTypes() {
         List<ProofType> userLearnings = proofTypesRepository.findAll();
         return userLearnings.stream().map(proofTypeMapper::toResponseDTO).collect(Collectors.toList());
+    }
+    public List<ProofTypeResponseDTO> getAllProofTypesPaginated(Pageable pageable) {
+        Page<ProofType> proofTypesPage = proofTypesRepository.findAll(pageable);
+        return proofTypesPage.getContent().stream()
+                .map(proofTypeMapper::toResponseDTO)
+                .collect(Collectors.toList());
     }
 
     public ProofTypeResponseDTO getProofTypeById(UUID typeId) {

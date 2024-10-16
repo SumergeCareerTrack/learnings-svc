@@ -2,17 +2,10 @@ package com.sumerge.careertrack.learnings_svc.controllers;
 
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import com.sumerge.careertrack.learnings_svc.entities.ScoreboardLevel;
 import com.sumerge.careertrack.learnings_svc.entities.requests.ScoreboardLevelRequestDTO;
@@ -27,11 +20,18 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ScoreboardLevelController {
 
-    private ScoreboardService scoreboardService;
+    private final ScoreboardService scoreboardService;
 
     @GetMapping("/")
-    public List<ScoreboardLevel> getAll() {
-        return scoreboardService.getAll();
+    public ResponseEntity<List<ScoreboardLevel>> getAllScoreboardLevels(
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size) {
+
+        if (page == null || size == null || size <= 0) {
+            return ResponseEntity.ok(scoreboardService.getAll());
+        } else {
+            return ResponseEntity.ok(scoreboardService.getAllScoreboardLevelsPaginated(PageRequest.of(page, size)));
+        }
     }
 
     @GetMapping("/{levelName}")

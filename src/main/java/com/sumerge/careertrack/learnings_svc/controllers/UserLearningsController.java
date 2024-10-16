@@ -6,12 +6,14 @@ import com.sumerge.careertrack.learnings_svc.entities.responses.UserLearningResp
 import com.sumerge.careertrack.learnings_svc.services.UserLearningsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/users-learnings")
 @RequiredArgsConstructor
@@ -20,9 +22,17 @@ public class UserLearningsController {
     private final UserLearningsService userLearningsService;
 
     @GetMapping
-    public ResponseEntity<List<UserLearningResponseDTO>> getAllUsersLearnings() {
-        return ResponseEntity.ok(userLearningsService.getAllUserLearnings());
+    public ResponseEntity<List<UserLearningResponseDTO>> getAllUsersLearnings(
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size) {
+
+        if (page == null || size == null || size <= 0) {
+            return ResponseEntity.ok(userLearningsService.getAllUserLearnings());
+        } else {
+            return ResponseEntity.ok(userLearningsService.getAllUserLearningsPaginated(PageRequest.of(page, size)));
+        }
     }
+
 
     //specific user-learning
     @GetMapping("/{learningId}")
@@ -57,20 +67,36 @@ public class UserLearningsController {
        return ResponseEntity.ok(userLearningsService.deleteUserLearning(learningId));
     }
 
-    // TODO Should we add an auth token ?
     @PutMapping("/approve/{learningId}")
-    public ResponseEntity<UserLearningResponseDTO> approveUserLearning(@PathVariable UUID learningId) {
-        return ResponseEntity.ok(userLearningsService.approveLearning(learningId));
+    public ResponseEntity<UserLearningResponseDTO> approveUserLearning(
+            @PathVariable UUID learningId,
+            @RequestParam String comment,
+            @RequestParam String managerId
+    ) {
+        return ResponseEntity.ok(userLearningsService.approveLearning(learningId,comment,managerId));
     }
 
     @PutMapping("/reject/{learningId}")
-    public ResponseEntity<UserLearningResponseDTO> rejectUserLearning(@PathVariable UUID learningId) {
-        return ResponseEntity.ok(userLearningsService.rejectLearning(learningId));
+    public ResponseEntity<UserLearningResponseDTO> rejectUserLearning(
+            @PathVariable UUID learningId,
+            @RequestParam String comment,
+            @RequestParam String managerId
+            ) {
+        return ResponseEntity.ok(userLearningsService.rejectLearning(learningId,managerId,comment));
+
     }
 
-    @PostMapping("/custom-learning")
-    public ResponseEntity<UserLearningResponseDTO> addCustomLearning(@RequestBody CustomUserLearningRequestDTO customUserLearning) throws Exception {
-        return ResponseEntity.ok(userLearningsService.createCustomLearning(customUserLearning));
+    @PostMapping("/custom-learning/{managerId}")
+    public ResponseEntity<UserLearningResponseDTO> addCustomLearning(
+            @RequestBody CustomUserLearningRequestDTO customUserLearning,
+            @PathVariable String managerId
+    ) throws Exception {
+        return ResponseEntity.ok(userLearningsService.createCustomLearning(customUserLearning,managerId));
+    }
+
+    @PostMapping("/subordinates")
+    public ResponseEntity<List<UserLearningResponseDTO>> getAllSubordinateUserLearnings(@RequestBody List<UUID> usersIds) {
+        return ResponseEntity.ok(userLearningsService.getAllSubordinateUserLearnings(usersIds));
     }
 
 }

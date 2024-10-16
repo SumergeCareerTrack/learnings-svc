@@ -38,7 +38,8 @@ class UserLearningsServiceTest {
     private BoosterRepository boosterRepository;
     @Mock
     private LearningService learningService;
-
+    @Mock
+    private ProducerService producerService;
     @Mock
     private CustomUserLearningMapper customUserLearningMapper;
 
@@ -153,8 +154,9 @@ class UserLearningsServiceTest {
         UserLearning userLearning1 = new UserLearning();
         UUID uuid = UUID.randomUUID();
         userLearning1.setId(uuid);
+        String managerId=UUID.randomUUID().toString();
         when(userLearningsRepository.findById(uuid)).thenReturn(Optional.of(userLearning1));
-        userLearningsService.approveLearning(uuid);
+        userLearningsService.approveLearning(uuid,managerId);
         verify(userLearningsRepository, times(1)).findById(uuid);
         verify(userLearningsRepository, times(1)).save(userLearning1);
     }
@@ -172,8 +174,9 @@ class UserLearningsServiceTest {
         UserLearning userLearning1 = new UserLearning();
         UUID uuid = UUID.randomUUID();
         userLearning1.setId(uuid);
+        String managerId=UUID.randomUUID().toString();
         when(userLearningsRepository.findById(uuid)).thenReturn(Optional.of(userLearning1));
-        userLearningsService.rejectLearning(uuid);
+        userLearningsService.rejectLearning(uuid,managerId);
         verify(userLearningsRepository, times(1)).findById(uuid);
         verify(userLearningsRepository, times(1)).save(userLearning1);
     }
