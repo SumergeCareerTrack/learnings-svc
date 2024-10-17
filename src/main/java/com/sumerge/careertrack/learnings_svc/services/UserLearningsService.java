@@ -135,7 +135,7 @@ public class UserLearningsService {
         userLearning.setComment(comment);
         List<UUID> receiverId = new ArrayList<UUID>();
         receiverId.add(userLearning.getUserId());
-        NotificationRequestDTO notification=createNotification(userLearning,receiverId,ActionEnum.APPROVAL,managerId,new Date());
+        NotificationRequestDTO notification=createNotification(userLearningMapper.toResponseDTO(userLearning),receiverId,ActionEnum.APPROVAL,managerId,new Date());
         producerService.sendMessage(notification);
         learningRepository.save(learning);
         return userLearningMapper.toResponseDTO(userLearningsRepository.save(userLearning));
@@ -153,7 +153,7 @@ public class UserLearningsService {
         List<UUID> receiverId = new ArrayList<UUID>();
         receiverId.add(userLearning.getUserId());
         NotificationRequestDTO notification=
-                createNotification(userLearning,receiverId,ActionEnum.REJECTION,managerId,new Date());
+                createNotification(userLearningMapper.toResponseDTO(userLearning),receiverId,ActionEnum.REJECTION,managerId,new Date());
         producerService.sendMessage(notification);
         return userLearningMapper.toResponseDTO(userLearningsRepository.save(userLearning));
     }
@@ -167,13 +167,14 @@ public class UserLearningsService {
         userLearningRequestDTO.setLearningId(learningResponse.getId());
         List<UUID> receiverId = new ArrayList<UUID>();
         receiverId.add(UUID.fromString(id));
+        UserLearningResponseDTO saved =createUserLearning(userLearningRequestDTO);
         NotificationRequestDTO notification=
-                createNotification(userLearningMapper.toUserLearning(userLearningRequestDTO),
-                        receiverId,ActionEnum.SUBMISSION,userLearningRequestDTO.getUserId(),userLearningMapper.toUserLearning(userLearningRequestDTO).getDate());
+                createNotification(saved,
+                        receiverId,ActionEnum.SUBMISSION,userLearningRequestDTO.getUserId(),new Date());
         producerService.sendMessage(notification);
-        return createUserLearning(userLearningRequestDTO);
+        return saved;
     }
-    public NotificationRequestDTO createNotification(UserLearning savedLearning, List<UUID> receiverId, ActionEnum actionEnum, UUID actorID, Date date) {
+    public NotificationRequestDTO createNotification(UserLearningResponseDTO savedLearning, List<UUID> receiverId, ActionEnum actionEnum, UUID actorID, Date date) {
         return NotificationRequestDTO.builder()
                 .seen(false)
                 .date(date)
