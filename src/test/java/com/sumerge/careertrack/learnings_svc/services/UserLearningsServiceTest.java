@@ -154,9 +154,10 @@ class UserLearningsServiceTest {
         UserLearning userLearning1 = new UserLearning();
         UUID uuid = UUID.randomUUID();
         userLearning1.setId(uuid);
+        String comment="good job";
         String managerId=UUID.randomUUID().toString();
         when(userLearningsRepository.findById(uuid)).thenReturn(Optional.of(userLearning1));
-        userLearningsService.approveLearning(uuid,managerId);
+        userLearningsService.approveLearning(uuid,comment,managerId);
         verify(userLearningsRepository, times(1)).findById(uuid);
         verify(userLearningsRepository, times(1)).save(userLearning1);
     }
@@ -175,8 +176,9 @@ class UserLearningsServiceTest {
         UUID uuid = UUID.randomUUID();
         userLearning1.setId(uuid);
         String managerId=UUID.randomUUID().toString();
+        String comment="need more work";
         when(userLearningsRepository.findById(uuid)).thenReturn(Optional.of(userLearning1));
-        userLearningsService.rejectLearning(uuid,managerId);
+        userLearningsService.rejectLearning(uuid,managerId,comment);
         verify(userLearningsRepository, times(1)).findById(uuid);
         verify(userLearningsRepository, times(1)).save(userLearning1);
     }
