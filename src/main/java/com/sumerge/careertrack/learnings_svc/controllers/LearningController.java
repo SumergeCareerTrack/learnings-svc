@@ -48,11 +48,9 @@ public class LearningController {
             @RequestParam(required = false) Integer size) {
 
         if (page == null || size == null || size <= 0) {
-            // Fetch all learnings without pagination
             List<LearningResponseDTO> learnings = learningService.getAll();
             return ResponseEntity.ok(learnings);
         } else {
-            // Paginated fetch
             return ResponseEntity.ok(learningService.getAllPaginated(PageRequest.of(page, size)));
         }
     }
@@ -64,11 +62,9 @@ public class LearningController {
             @RequestParam(required = false) Integer size) {
 
         if (page == null || size == null || size <= 0) {
-            // Fetch all pending learnings without pagination
             List<LearningResponseDTO> learnings = learningService.getAllPending();
             return ResponseEntity.ok(learnings);
         } else {
-            // Paginated fetch
             return ResponseEntity.ok(learningService.getAllPendingPaginated(PageRequest.of(page, size)));
         }
     }
@@ -81,11 +77,9 @@ public class LearningController {
             @RequestParam(required = false) Integer size) {
 
         if (page == null || size == null || size <= 0) {
-            // Fetch all approved learnings without pagination
             List<LearningResponseDTO> learnings = learningService.getAllNonPending();
             return ResponseEntity.ok(learnings);
         } else {
-            // Paginated fetch
             return ResponseEntity.ok(learningService.getAllNonPendingPaginated(PageRequest.of(page, size)));
         }
     }
@@ -108,11 +102,9 @@ public class LearningController {
             @RequestParam(required = false) Integer size) {
 
         if (page == null || size == null || size <= 0) {
-            // Fetch all learnings by type without pagination
             List<LearningResponseDTO> learnings = learningService.getLearningByType(type);
             return ResponseEntity.ok(learnings);
         } else {
-            // Paginated fetch
             return ResponseEntity.ok(learningService.getLearningByTypePaginated(type, PageRequest.of(page, size)));
         }
     }
