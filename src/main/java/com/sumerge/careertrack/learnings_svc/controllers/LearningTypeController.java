@@ -40,11 +40,9 @@ public class LearningTypeController {
             @RequestParam(required = false) Integer size) {
 
         if (page == null || size == null || size <= 0) {
-            // Fetch all types without pagination
             List<LearningTypeResponseDTO> types = learningTypeService.getAll();
             return ResponseEntity.ok(types);
         } else {
-            // Paginated fetch
             return ResponseEntity.ok(learningTypeService.getAllTypesPaginated(PageRequest.of(page, size)));
         }
     }
